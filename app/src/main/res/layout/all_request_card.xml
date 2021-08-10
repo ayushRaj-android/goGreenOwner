@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginStart="18dp"
+    android:layout_marginEnd="18dp"
+    app:cardCornerRadius="20dp"
+    app:cardForegroundColor="@color/white"
+    app:cardElevation="50dp"
+    android:layout_marginTop="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="15dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:orientation="horizontal"
+            android:weightSum="3">
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:padding="5dp">
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/marker_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/ic_neon_marker"/>
+
+                <TextView
+                    android:id="@+id/address_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/marker_image"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="5dp"
+                    android:hint="Address"
+                    android:layout_alignParentTop="true"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="start"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:singleLine="true"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:id="@+id/order_placement_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/address_tv"
+                    android:layout_alignStart="@id/address_tv"
+                    android:text="Wed 14-Dec-2021"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/secondary_text"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+                <ImageView
+                    android:id="@+id/user_profile_pic"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/product_logo" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <com.ata.gogreenowner.View.StepView
+            android:id="@+id/step_view"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:layout_margin="5dp"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:visibility="visible"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/divider"
+            android:layout_marginBottom="2dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:weightSum="2"
+            android:showDividers="middle"
+            android:padding="5dp"
+            android:divider="@color/colorAccent">
+            <RelativeLayout
+                android:id="@+id/need_help_rl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="Weight : 10kg"
+                    android:textColor="@color/black"
+                    android:gravity="center"
+                    android:drawablePadding="5dp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/view_details_rl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="Value : Rs.250"
+                    android:textColor="@color/black"
+                    android:gravity="center"
+                    android:drawablePadding="5dp"/>
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

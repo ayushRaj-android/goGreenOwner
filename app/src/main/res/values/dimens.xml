@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="svFillRadius">11dp</dimen>
+    <dimen name="svStrokeWidth">3dp</dimen>
+    <dimen name="svLineWidth">4dp</dimen>
+    <dimen name="svTextSize">12sp</dimen>
+    <dimen name="svDrawablePadding">10dp</dimen>
+    <dimen name="sv_stepNumberTextSize">12sp</dimen>
+</resources>

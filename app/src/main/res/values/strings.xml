@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">Go Green Owner</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tnC"><u>Accepts Terms and Conditions</u>.</string>
+    <string name="underlined_signIn"><u>Sign In</u></string>
+    <string name="underlined_signUp"><u>Sign Up</u></string>
+    <string name="signIn">Sign In</string>
+    <string name="signUp">Sign Up</string>
+    <string name="welcome">WELCOME!</string>
+    <string name="welcome_back">WELCOME BACK!</string>
+    <string name="name">Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="password">Password</string>
+    <string name="conf_password">Confirm Password</string>
+    <string name="Signing_up">Signing Up...</string>
+    <string name="verify_acc">Verify your account</string>
+    <string name="verify_msg">Please type the verification code sent to your phone.</string>
+    <string name="underline_tnC"><u>Terms and Conditions</u></string>
+    <string name="login_phone">Enter your phone number</string>
+    <string name="login_pass">Enter your password</string>
+    <string name="login_forgot_pass"><u>Forgot Password?</u></string>
+    <string name="forgot_pass">Forgot Password?</string>
+    <string name="forgot_pass_msg">We just need your registered Phone Number to send to reset Password OTP</string>
+    <string name="next">Next</string>
+    <string name="didnt_rec_code">Received the code?</string>
+    <string name="pls_wait">Please wait</string>
+    <string name="resend_otp">Resend OTP</string>
+    <string name="enter_new_pass">Please Enter New Password</string>
+    <string name="change_pass">Change Password</string>
+    <string name="hint_autocomplete">Current Marker Address</string>
+    <string name="comp_address">Complete Address*</string>
+    <string name="address_placeholder_text">House no./Flat no./Floor/Building</string>
+    <string name="floor_hint">Floor (Optional)</string>
+    <string name="how_to_reach_optional">How to Reach (Optional)</string>
+    <string name="default_address_checkbox">Mark as default address</string>
+    <string name="request">Request</string>
+    <string name="select_all"><u>Select All</u></string>
+    <string name="unselect_all"><u>Unselect All</u></string>
+</resources>
