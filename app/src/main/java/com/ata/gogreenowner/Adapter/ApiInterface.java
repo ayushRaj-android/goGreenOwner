@@ -1,6 +1,9 @@
 package com.ata.gogreenowner.Adapter;
 
 
+import com.ata.gogreenowner.Model.JunkYardOwnerDeviceFCM;
+import com.ata.gogreenowner.Model.LoginObject;
+
 import java.util.HashMap;
 
 import okhttp3.MultipartBody;
@@ -15,5 +18,26 @@ import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface ApiInterface {
+
+    @POST("/auth/junkYardOwner/login")
+    Call<HashMap<Object,Object>> userLogin(
+            @Body LoginObject loginObject
+    );
+
+    @GET("/junkYardOwner/getAddress")
+    Call<HashMap<Object,Object>> getMySavedAddress(
+            @Header("Authorization") String authHeader
+    );
+
+    @POST("/generateNewToken")
+    Call<HashMap<Object,Object>> generateNewJwtToken(
+            @Query("phoneNumber") String phoneNumber,
+            @Header("Authorization") String authHeader
+    );
+
+    @POST("/notification/registerDevice")
+    Call<HashMap<Object,Object>> registerDevice(@Header("Authorization") String auth,
+                                                @Query("requestId") String requestId,
+                                                @Body JunkYardOwnerDeviceFCM junkYardOwnerDeviceFCM);
 
 }

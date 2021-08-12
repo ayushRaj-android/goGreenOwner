@@ -92,7 +92,7 @@ public class PendingRequestRecyclerAdapter extends RecyclerView.Adapter<PendingR
         }
 
         void bindPendingRequest(PendingRequests pendingRequests){
-            addressTextView.setText(pendingRequests.getAddress());
+//            addressTextView.setText(pendingRequests.getAddress());
             if(pendingRequests.isSelected()){
                 pendingReqCheckBox.setChecked(true);
             }else{
