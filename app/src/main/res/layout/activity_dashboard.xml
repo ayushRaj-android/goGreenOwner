@@ -20,7 +20,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_alignParentEnd="true"
-                android:src="@drawable/product_logo"/>
+                android:src="@drawable/product_logo" />
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"

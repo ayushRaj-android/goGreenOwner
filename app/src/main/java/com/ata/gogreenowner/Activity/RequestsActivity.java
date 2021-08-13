@@ -1,6 +1,5 @@
 package com.ata.gogreenowner.Activity;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -8,8 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Color;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,11 +21,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ata.gogreenowner.Adapter.AllRequestRecyclerAdapter;
+import com.ata.gogreenowner.Adapter.ApiClient;
+import com.ata.gogreenowner.Adapter.ApiInterface;
 import com.ata.gogreenowner.R;
+import com.ata.gogreenowner.Utility.SharedPreference;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RequestsActivity extends BaseActivity {
 
@@ -38,9 +47,18 @@ public class RequestsActivity extends BaseActivity {
     private String selectedSearchType = "Pickup Agent";
     private RecyclerView requestsRecyclerView;
     private AllRequestRecyclerAdapter allRequestRecyclerAdapter;
+    private Dialog updateDialog;
+    TextView errorTV;
+    JSONArray customerArray;
+    SharedPreference sharedPreference;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        errorTV = findViewById(R.id.errorTV);
+        updateDialog = new Dialog(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_requests);
 
@@ -84,10 +102,75 @@ public class RequestsActivity extends BaseActivity {
         });
         setSearchTypeSpinner();
         searchTypeSpinner.setSelection(0);
-        allRequestRecyclerAdapter = new AllRequestRecyclerAdapter();
-        requestsRecyclerView.setAdapter(allRequestRecyclerAdapter);
+        getRequestList();
+
     }
 
+    private void getRequestList(){
+        ApiClient apiClient = new ApiClient(getApplicationContext());
+        ApiInterface apiService = apiClient.getClient().create(ApiInterface.class);
+
+        Call<HashMap<Object, Object>> call=apiService.getCustomerList(sharedPreference.getJwtToken());
+
+        call.enqueue(new Callback<HashMap<Object, Object>>() {
+            @Override
+            public void onResponse(Call<HashMap<Object, Object>> call,
+                                   Response<HashMap<Object, Object>> response) {
+                if(response.isSuccessful() && response.body()!=null){
+                    HashMap<Object, Object> resultMap = response.body();
+                    int statusCode = (int) (double) resultMap.get("statusCode");
+                    Log.d("Ayush", String.valueOf(statusCode));
+                    if (statusCode == -1) {
+                        updateDialog.dismiss();
+                        errorTV.setVisibility(View.VISIBLE);
+                        errorTV.setText("Owner Invalid");
+                        errorTV.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                errorTV.setVisibility(View.GONE);
+                            }
+                        }, 5000);
+                    }
+                    else if(statusCode==2){
+                        try {
+                            Object customerObj=resultMap.get("data");
+                            customerArray=new JSONArray(customerObj.toString());
+                            allRequestRecyclerAdapter = new AllRequestRecyclerAdapter(getApplicationContext(),customerArray);
+                            requestsRecyclerView.setAdapter(allRequestRecyclerAdapter);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                    else{
+                        updateDialog.dismiss();
+                        errorTV.setVisibility(View.VISIBLE);
+                        errorTV.setText("Internal Server Exception");
+                        errorTV.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                errorTV.setVisibility(View.GONE);
+                            }
+                        }, 5000);
+                    }
+                }
+                else {
+                    updateDialog.dismiss();
+                    errorTV.setVisibility(View.VISIBLE);
+                    errorTV.setText("Internal Server Exception");
+                    errorTV.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            errorTV.setVisibility(View.GONE);
+                        }
+                    }, 5000);
+                }
+            }
+            @Override
+            public void onFailure(Call<HashMap<Object, Object>> call, Throwable t) {
+            }
+        });
+    }
     private void setSearchTypeSpinner(){
         final List<String> searchTypeList = new ArrayList<>(Arrays.asList(searchType));
 

@@ -30,7 +30,7 @@ public class SplashActivity extends AppCompatActivity {
 
         sharedPreference = new SharedPreference(getApplicationContext());
         if(sharedPreference.isUserLoggedIn()){
-            //updateJwtToken();
+            updateJwtToken();
         }else{
             Intent intent = new Intent(this,LoginActivity.class);
             startActivity(intent);
