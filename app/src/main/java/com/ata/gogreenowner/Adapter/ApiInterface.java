@@ -41,13 +41,13 @@ public interface ApiInterface {
                                                 @Body JunkYardOwnerDeviceFCM junkYardOwnerDeviceFCM);
 
 
-    @GET("/auth/junkyard/getCustomerList")
-    Call<HashMap<Object,Object>> getCustomerList(
+    @GET("/auth/junkYardOwner/getRequestList")
+    Call<HashMap<Object,Object>> getRequestList(
             @Header("Authorization") String authHeader
     );
 
     @Multipart
-    @POST("/auth/junkyard/registerPickupBoy")
+    @POST("/auth/junkYardOwner/registerPickupBoy")
     Call<HashMap<Object,Object>> registerPickupBoy(@Header("Authorization") String jwtToken,
                                                @Part MultipartBody.Part profilePic,
                                                @Part MultipartBody.Part idPic,

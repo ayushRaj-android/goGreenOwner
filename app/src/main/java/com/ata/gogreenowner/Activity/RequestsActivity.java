@@ -59,6 +59,8 @@ public class RequestsActivity extends BaseActivity {
         errorTV = findViewById(R.id.errorTV);
         updateDialog = new Dialog(this);
 
+        sharedPreference=new SharedPreference(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_requests);
 
@@ -110,12 +112,13 @@ public class RequestsActivity extends BaseActivity {
         ApiClient apiClient = new ApiClient(getApplicationContext());
         ApiInterface apiService = apiClient.getClient().create(ApiInterface.class);
 
-        Call<HashMap<Object, Object>> call=apiService.getCustomerList(sharedPreference.getJwtToken());
+        Call<HashMap<Object, Object>> call=apiService.getRequestList("Bearer "+sharedPreference.getJwtToken());
 
         call.enqueue(new Callback<HashMap<Object, Object>>() {
             @Override
             public void onResponse(Call<HashMap<Object, Object>> call,
                                    Response<HashMap<Object, Object>> response) {
+                Log.d("Ayush",response.toString());
                 if(response.isSuccessful() && response.body()!=null){
                     HashMap<Object, Object> resultMap = response.body();
                     int statusCode = (int) (double) resultMap.get("statusCode");
@@ -135,6 +138,7 @@ public class RequestsActivity extends BaseActivity {
                         try {
                             Object customerObj=resultMap.get("data");
                             customerArray=new JSONArray(customerObj.toString());
+                            System.out.println(customerArray);
                             allRequestRecyclerAdapter = new AllRequestRecyclerAdapter(getApplicationContext(),customerArray);
                             requestsRecyclerView.setAdapter(allRequestRecyclerAdapter);
                         } catch (JSONException e) {
