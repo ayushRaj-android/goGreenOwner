@@ -42,9 +42,11 @@
             android:textColor="@color/svCancelColor"
             android:gravity="center" />
         <ScrollView
+            android:id="@+id/register_form_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="20dp">
+            android:layout_margin="20dp"
+            android:visibility="gone">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -185,5 +187,141 @@
                     android:textAllCaps="false"/>
             </LinearLayout>
         </ScrollView>
+        <LinearLayout
+            android:id="@+id/otpVerifyLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@color/divider_color"
+            android:visibility="visible">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent"
+                android:text="@string/verify_acc"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:layout_marginTop="20dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text"
+                android:text="@string/verify_msg"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:layout_margin="10dp"
+                android:padding="10dp"/>
+            <LinearLayout
+                android:id="@+id/layout_otp"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:background="@color/colorWhiteTransparent">
+
+                <EditText
+                    android:id="@+id/editTextOne"
+                    android:layout_width="40dp"
+                    android:layout_height="50dp"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:textColor="@color/colorAccent"
+                    android:nextFocusRight="@id/editTextTwo"
+                    android:background="@drawable/white_border_edit"
+                    android:gravity="center"/>
+                <requestFocus/>
+                <EditText
+                    android:id="@+id/editTextTwo"
+                    android:layout_width="40dp"
+                    android:layout_height="50dp"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:layout_marginStart="5dp"
+                    android:textColor="@color/colorAccent"
+                    android:background="@drawable/white_border_edit"
+                    android:gravity="center"/>
+                <EditText
+                    android:id="@+id/editTextThree"
+                    android:layout_width="40dp"
+                    android:layout_height="50dp"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:layout_marginStart="5dp"
+                    android:textColor="@color/colorAccent"
+                    android:background="@drawable/white_border_edit"
+                    android:gravity="center"/>
+                <EditText
+                    android:id="@+id/editTextFour"
+                    android:layout_width="40dp"
+                    android:layout_height="50dp"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:layout_marginStart="5dp"
+                    android:textColor="@color/colorAccent"
+                    android:background="@drawable/white_border_edit"
+                    android:gravity="center"/>
+                <EditText
+                    android:id="@+id/editTextFive"
+                    android:layout_width="40dp"
+                    android:layout_height="50dp"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:layout_marginStart="5dp"
+                    android:textColor="@color/colorAccent"
+                    android:background="@drawable/white_border_edit"
+                    android:gravity="center"/>
+                <EditText
+                    android:id="@+id/editTextSix"
+                    android:layout_width="40dp"
+                    android:layout_height="50dp"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:layout_marginStart="5dp"
+                    android:textColor="@color/colorAccent"
+                    android:background="@drawable/white_border_edit"
+                    android:gravity="center"/>
+            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text"
+                android:text="@string/didnt_rec_code"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:padding="10dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/primary_text"
+                    android:text="@string/pls_wait"
+                    android:textSize="12sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorAccent"
+                    android:id="@+id/timer"
+                    android:layout_marginStart="5dp"
+                    tools:text="0:30 "
+                    android:textSize="12sp"/>
+            </LinearLayout>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/resendOtpButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/resend_otp"
+                android:layout_margin="15dp"
+                android:layout_gravity="center"
+                android:background="@drawable/card_button"
+                android:textSize="12sp"
+                android:textColor="@color/text_icon"/>
+        </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

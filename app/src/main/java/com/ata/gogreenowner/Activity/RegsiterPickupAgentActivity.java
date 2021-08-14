@@ -7,24 +7,37 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ata.gogreenowner.Adapter.ApiClient;
+import com.ata.gogreenowner.Adapter.ApiInterface;
 import com.ata.gogreenowner.R;
+import com.ata.gogreenowner.Utility.SharedPreference;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -34,15 +47,20 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-public class RegsiterPickupAgentActivity extends AppCompatActivity {
+public class RegsiterPickupAgentActivity extends BaseActivity implements TextWatcher {
 
+    private ScrollView registerFormLayout;
     private TextInputLayout agentNameLayout;
     private TextInputEditText agentNameText;
     private TextInputLayout agentPhoneLayout;
@@ -56,6 +74,17 @@ public class RegsiterPickupAgentActivity extends AppCompatActivity {
     private ImageView uploadPhotoResImage;
     private ImageView uploadAadharResImage;
     private AppCompatButton registerAgentSubmitBtn;
+
+    private LinearLayout otpLayout;
+    private EditText editText_one;
+    private EditText editText_two;
+    private EditText editText_three;
+    private EditText editText_four;
+    private EditText editText_five;
+    private EditText editText_six;
+    private AppCompatButton resendOtpButton;
+    private TextView timer;
+
     private static final int REQUEST_CAMERA = 118;
     private static final int REQUEST_EXTERNAL_STORAGE = 115;
     private static String[] PERMISSIONS_STORAGE = {
@@ -68,12 +97,17 @@ public class RegsiterPickupAgentActivity extends AppCompatActivity {
     private Bitmap currentIdImage;
     private File currentImageFile;
     private File idImageFile;
+    private SharedPreference sharedPreference;
+    private Dialog updateDialog;
+    private Snackbar customSnackbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_regsiter_pickup_agent);
 
+        registerFormLayout = findViewById(R.id.register_form_layout);
         agentNameLayout = findViewById(R.id.name_input_layout);
         agentNameText = findViewById(R.id.name_edit);
         agentPhoneLayout = findViewById(R.id.phone_input_layout);
@@ -86,6 +120,25 @@ public class RegsiterPickupAgentActivity extends AppCompatActivity {
         uploadPhotoResImage = findViewById(R.id.uploadPhotoResImage);
         uploadAadharResImage = findViewById(R.id.uploadAadharResImage);
         registerAgentSubmitBtn = findViewById(R.id.register_agent_submit_btn);
+        sharedPreference = new SharedPreference(this);
+
+        otpLayout = findViewById(R.id.otpVerifyLayout);
+        editText_one = findViewById(R.id.editTextOne);
+        editText_two = findViewById(R.id.editTextTwo);
+        editText_three = findViewById(R.id.editTextThree);
+        editText_four = findViewById(R.id.editTextFour);
+        editText_five = findViewById(R.id.editTextFive);
+        editText_six = findViewById(R.id.editTextSix);
+        resendOtpButton = findViewById(R.id.resendOtpButton);
+        timer = findViewById(R.id.timer);
+        updateDialog = new Dialog(this);
+
+        editText_one.addTextChangedListener(this);
+        editText_two.addTextChangedListener(this);
+        editText_three.addTextChangedListener(this);
+        editText_four.addTextChangedListener(this);
+        editText_five.addTextChangedListener(this);
+        editText_six.addTextChangedListener(this);
 
         uploadPhotoText.setOnClickListener( v->{
             selectImage("photo");
@@ -99,6 +152,70 @@ public class RegsiterPickupAgentActivity extends AppCompatActivity {
             registerTheAgent();
         });
     }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        if (s.length() == 1) {
+            if (editText_one.length() == 1) {
+                editText_two.requestFocus();
+            }
+            if (editText_two.length() == 1) {
+                editText_three.requestFocus();
+            }
+            if (editText_three.length() == 1) {
+                editText_four.requestFocus();
+            }
+            if (editText_four.length() == 1) {
+                editText_five.requestFocus();
+            }
+            if (editText_five.length() == 1) {
+                editText_six.requestFocus();
+            }
+            if (editText_six.length() == 1) {
+                verifyOtp();
+            }
+
+        } else if (s.length() == 0) {
+            if (editText_six.length() == 0) {
+                editText_five.requestFocus();
+            }
+            if (editText_five.length() == 0) {
+                editText_four.requestFocus();
+            }
+            if (editText_four.length() == 0) {
+                editText_three.requestFocus();
+            }
+            if (editText_three.length() == 0) {
+                editText_two.requestFocus();
+            }
+            if (editText_two.length() == 0) {
+                editText_one.requestFocus();
+            }
+        }
+    }
+
+    private void verifyOtp() {
+        String otpValue = editText_one.getText().toString() + "" + editText_two.getText().toString() + ""
+                + editText_three.getText().toString() + "" + editText_four.getText().toString()
+                + "" + editText_five.getText().toString() + "" + editText_six.getText().toString();
+        if (otpValue.length() == 6) {
+            showDialog("Validating OTP!");
+            ApiClient apiClient = new ApiClient(getApplicationContext());
+            ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+            //Call<HashMap<Object,Object>> call = apiService.otpVerify(otpValue,phoneNumber);
+        }
+    }
+
 
     private void selectImage(String type) {
         final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };
@@ -253,11 +370,12 @@ public class RegsiterPickupAgentActivity extends AppCompatActivity {
 
     private void registerTheAgent() {
         MultipartBody.Part profilePic = null;
-        MultipartBody.Part idImage = null;
+        MultipartBody.Part idPic = null;
         String agentName = agentNameText.getText().toString();
         String agentPhone = "91"+agentPhoneText.getText().toString();
         String agentAadhar = agentAadharText.getText().toString();
         if(isValidForm(agentName,agentPhone,agentAadhar)){
+            showDialog("Registering Pickup Agent!");
             RequestBody name = RequestBody.create(MediaType.parse("multipart/form-data"),
                     agentName);
             RequestBody phone = RequestBody.create(MediaType.parse("multipart/form-data"),
@@ -272,8 +390,72 @@ public class RegsiterPickupAgentActivity extends AppCompatActivity {
 
             RequestBody idPicRequestFile =
                     RequestBody.create(MediaType.parse("multipart/form-data"), idImageFile);
-            profilePic = MultipartBody.Part.createFormData("idPic",
+            idPic = MultipartBody.Part.createFormData("idPic",
                     idImageFile.getName(), idPicRequestFile);
+
+            ApiClient apiClient = new ApiClient(getApplicationContext());
+            ApiInterface apiService = apiClient.getClient().create(ApiInterface.class);
+            String jwtToken = "Bearer " + sharedPreference.getJwtToken();
+            Call<HashMap<Object, Object>> call = apiService.registerPickupBoy(
+                    jwtToken,profilePic,idPic,name,phone,aadhar);
+            call.enqueue(new Callback<HashMap<Object, Object>>() {
+                @Override
+                public void onResponse(Call<HashMap<Object, Object>> call, Response<HashMap<Object, Object>> response) {
+                    Log.d("Ayush",response.toString());
+                    if (response.isSuccessful() && response.body() != null) {
+                        HashMap<Object,Object> resultMap = response.body();
+                        int statusCode = (int)(double)resultMap.get("statusCode");
+                        if(statusCode == 1){
+                            updateDialog.dismiss();
+                            registerFormLayout.setVisibility(View.GONE);
+                            otpLayout.setVisibility(View.VISIBLE);
+                        }else if(statusCode == -1){
+                            updateDialog.dismiss();
+                            errorTV.setVisibility(View.VISIBLE);
+                            errorTV.setText("Phone number already in use!");
+                            errorTV.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    errorTV.setVisibility(View.INVISIBLE);
+                                }
+                            }, 3000);
+                        } else{
+                            updateDialog.dismiss();
+                            errorTV.setVisibility(View.VISIBLE);
+                            errorTV.setText("Try Again!");
+                            errorTV.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    errorTV.setVisibility(View.INVISIBLE);
+                                }
+                            }, 3000);
+                        }
+                    }else{
+                        updateDialog.dismiss();
+                        errorTV.setVisibility(View.VISIBLE);
+                        errorTV.setText("Try Again!");
+                        errorTV.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                errorTV.setVisibility(View.INVISIBLE);
+                            }
+                        }, 3000);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<HashMap<Object, Object>> call, Throwable t) {
+                    updateDialog.dismiss();
+                    errorTV.setVisibility(View.VISIBLE);
+                    errorTV.setText("Try Again!");
+                    errorTV.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            errorTV.setVisibility(View.INVISIBLE);
+                        }
+                    }, 3000);
+                }
+            });
         }
     }
 
@@ -340,5 +522,28 @@ public class RegsiterPickupAgentActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    private void showDialog(String text) {
+        ImageView dialog_image;
+        TextView dialog_text;
+        updateDialog.setContentView(R.layout.loading_popup);
+        updateDialog.setCanceledOnTouchOutside(false);
+        updateDialog.setCancelable(false);
+        dialog_image = updateDialog.findViewById(R.id.loading_image);
+        dialog_text = updateDialog.findViewById(R.id.loading_text);
+        Glide.with(this).load(R.drawable.loader).into(dialog_image);
+        dialog_text.setText(text);
+        updateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        updateDialog.show();
+    }
+
+    private void showSnackbar(View view ,String text){
+        customSnackbar = Snackbar.make(view, text, Snackbar.LENGTH_LONG);
+        View snackBarView = customSnackbar.getView();
+        snackBarView.setBackgroundColor(getResources().getColor(R.color.svSelectedColor));
+        TextView textView = (TextView) snackBarView.findViewById(com.google.android.material.R.id.snackbar_text);
+        textView.setTextColor(getResources().getColor(R.color.svCancelColor));
+        customSnackbar.show();
     }
 }
