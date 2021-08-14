@@ -29,7 +29,7 @@ public interface ApiInterface {
             @Header("Authorization") String authHeader
     );
 
-    @POST("/generateNewToken")
+    @POST("/junkYardOwner/generateNewToken")
     Call<HashMap<Object,Object>> generateNewJwtToken(
             @Query("phoneNumber") String phoneNumber,
             @Header("Authorization") String authHeader
@@ -40,8 +40,14 @@ public interface ApiInterface {
                                                 @Query("requestId") String requestId,
                                                 @Body JunkYardOwnerDeviceFCM junkYardOwnerDeviceFCM);
 
+
+    @GET("/auth/junkYardOwner/getRequestList")
+    Call<HashMap<Object,Object>> getRequestList(
+            @Header("Authorization") String authHeader
+    );
+
     @Multipart
-    @POST("/auth/junkyard/registerPickupBoy")
+    @POST("/auth/junkYardOwner/registerPickupBoy")
     Call<HashMap<Object,Object>> registerPickupBoy(@Header("Authorization") String jwtToken,
                                                @Part MultipartBody.Part profilePic,
                                                @Part MultipartBody.Part idPic,
