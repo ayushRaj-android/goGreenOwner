@@ -49,4 +49,9 @@ public interface ApiInterface {
                                                @Part("phoneNumber") RequestBody phoneNumber,
                                                @Part("localIdNumber") RequestBody localIdNumber);
 
+    @GET("/auth/junkyard/verifyPickupBoy")
+    Call<HashMap<Object,Object>> verifyPickupBoy(@Header("Authorization") String jwtToken,
+                                                 @Query("otp") String otp,
+                                                 @Query("phoneNumber") String phoneNumber);
+
 }

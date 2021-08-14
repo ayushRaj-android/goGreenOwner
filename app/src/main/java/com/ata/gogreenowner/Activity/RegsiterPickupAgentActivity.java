@@ -17,6 +17,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -100,6 +102,7 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
     private SharedPreference sharedPreference;
     private Dialog updateDialog;
     private Snackbar customSnackbar;
+    private String phoneNumber;
 
 
     @Override
@@ -212,7 +215,71 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
             showDialog("Validating OTP!");
             ApiClient apiClient = new ApiClient(getApplicationContext());
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-            //Call<HashMap<Object,Object>> call = apiService.otpVerify(otpValue,phoneNumber);
+            String jwtToken = "Bearer " + sharedPreference.getJwtToken();
+            Call<HashMap<Object,Object>> call = apiService.verifyPickupBoy(jwtToken,
+                    otpValue,phoneNumber);
+            call.enqueue(new Callback<HashMap<Object, Object>>() {
+                @Override
+                public void onResponse(Call<HashMap<Object, Object>> call, Response<HashMap<Object, Object>> response) {
+                    Log.d("Ayush",response.toString());
+                    if (response.isSuccessful() && response.body() != null) {
+                        HashMap<Object,Object> resultMap = response.body();
+                        int statusCode = (int)(double)resultMap.get("statusCode");
+                        if(statusCode == 1){
+                            updateDialog.dismiss();
+                            showSuccessDialog();
+                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //Do something here
+                                    Intent intent = new Intent(getApplicationContext(),PickupAgentActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            }, 5000);
+                        }else if(statusCode == -1 || statusCode == -3){
+                            updateDialog.dismiss();
+                            otpLayout.setVisibility(View.VISIBLE);
+                            errorTV.setVisibility(View.VISIBLE);
+                            errorTV.setText("OTP Incorrect/Expired!");
+                            errorTV.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    errorTV.setVisibility(View.INVISIBLE);
+                                }
+                            }, 3000);
+                        }else{
+                            updateDialog.dismiss();
+                            otpLayout.setVisibility(View.VISIBLE);
+                            errorTV.setVisibility(View.VISIBLE);
+                            errorTV.setText("Server Issue");
+                            errorTV.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    errorTV.setVisibility(View.INVISIBLE);
+                                }
+                            }, 3000);
+                        }
+                    }else{
+                        updateDialog.dismiss();
+                        otpLayout.setVisibility(View.VISIBLE);
+                        errorTV.setVisibility(View.VISIBLE);
+                        errorTV.setText("Network/Server Issue!");
+                        errorTV.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                errorTV.setVisibility(View.INVISIBLE);
+                            }
+                        }, 3000);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<HashMap<Object, Object>> call, Throwable t) {
+                    updateDialog.dismiss();
+                    showSnackbar(otpLayout, "OTP Verification Failed!");
+                }
+            });
         }
     }
 
@@ -375,6 +442,7 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
         String agentPhone = "91"+agentPhoneText.getText().toString();
         String agentAadhar = agentAadharText.getText().toString();
         if(isValidForm(agentName,agentPhone,agentAadhar)){
+            phoneNumber = agentPhone;
             showDialog("Registering Pickup Agent!");
             RequestBody name = RequestBody.create(MediaType.parse("multipart/form-data"),
                     agentName);
@@ -545,5 +613,19 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
         TextView textView = (TextView) snackBarView.findViewById(com.google.android.material.R.id.snackbar_text);
         textView.setTextColor(getResources().getColor(R.color.svCancelColor));
         customSnackbar.show();
+    }
+
+    private void showSuccessDialog(){
+        ImageView dialog_image;
+        TextView dialog_text;
+        updateDialog.setContentView(R.layout.loading_popup);
+        updateDialog.setCanceledOnTouchOutside(false);
+        updateDialog.setCancelable(false);
+        dialog_image = updateDialog.findViewById(R.id.loading_image);
+        dialog_text = updateDialog.findViewById(R.id.loading_text);
+        Glide.with(this).load(R.drawable.ic_baseline_check_circle_outline_24).into(dialog_image);
+        dialog_text.setText("Pickup Boy Registration Successful \n Redirecting in 5 seconds");
+        updateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        updateDialog.show();
     }
 }
