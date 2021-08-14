@@ -46,4 +46,13 @@ public interface ApiInterface {
             @Header("Authorization") String authHeader
     );
 
+    @Multipart
+    @POST("/auth/junkyard/registerPickupBoy")
+    Call<HashMap<Object,Object>> registerPickupBoy(@Header("Authorization") String jwtToken,
+                                               @Part MultipartBody.Part profilePic,
+                                               @Part MultipartBody.Part idPic,
+                                               @Part("name") RequestBody name,
+                                               @Part("phoneNumber") RequestBody phoneNumber,
+                                               @Part("localIdNumber") RequestBody localIdNumber);
+
 }

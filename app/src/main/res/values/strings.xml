@@ -15,7 +15,7 @@
     <string name="conf_password">Confirm Password</string>
     <string name="Signing_up">Signing Up...</string>
     <string name="verify_acc">Verify your account</string>
-    <string name="verify_msg">Please type the verification code sent to your phone.</string>
+    <string name="verify_msg">Please type the verification code sent to Pickup Boy phone.</string>
     <string name="underline_tnC"><u>Terms and Conditions</u></string>
     <string name="login_phone">Enter your phone number</string>
     <string name="login_pass">Enter your password</string>
