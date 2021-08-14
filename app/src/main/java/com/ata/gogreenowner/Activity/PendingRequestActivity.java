@@ -68,7 +68,7 @@ public class PendingRequestActivity extends AppCompatActivity implements Pending
         assignPickupBoyButton.setOnClickListener( v->{
             List<PendingRequests> selectedPendingReq = pendingRequestRecyclerAdapter.getSelectedPendingRequest();
             for(PendingRequests pr : selectedPendingReq){
-                Log.d("Ayush",pr.getAddress());
+//                Log.d("Ayush",pr.getAddress());
             }
             showAssignPopUp();
         });
