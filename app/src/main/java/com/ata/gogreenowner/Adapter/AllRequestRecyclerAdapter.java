@@ -82,7 +82,6 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
                 String dayWeekText = new SimpleDateFormat("EE").format(date);
                 order_placement_time.setText(dayWeekText+" "+timeStamp);
                 int status=jsonObject.getInt("status");
-                status=-1;
                 if(status==0){
                     step_view.selectedStep(1);
                     weightValueTab.setVisibility(View.GONE);
