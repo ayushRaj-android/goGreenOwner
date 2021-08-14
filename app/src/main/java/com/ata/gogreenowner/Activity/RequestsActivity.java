@@ -28,9 +28,12 @@ import com.ata.gogreenowner.Utility.SharedPreference;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -51,6 +54,13 @@ public class RequestsActivity extends BaseActivity {
     TextView errorTV;
     JSONArray customerArray;
     SharedPreference sharedPreference;
+    String radioGrpText="All";
+
+    private JSONArray allRequestList;
+    private JSONArray todayRequestList;
+    private JSONArray upcomingRequestList;
+    private JSONArray completedRequestList;
+    private JSONArray searchRequestList;
 
 
     @Override
@@ -60,6 +70,11 @@ public class RequestsActivity extends BaseActivity {
         updateDialog = new Dialog(this);
 
         sharedPreference=new SharedPreference(this);
+        allRequestList=new JSONArray();
+        todayRequestList=new JSONArray();
+        upcomingRequestList=new JSONArray();
+        completedRequestList=new JSONArray();
+        searchRequestList=new JSONArray();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_requests);
@@ -77,7 +92,24 @@ public class RequestsActivity extends BaseActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 RadioButton rb = (RadioButton) group.findViewById(checkedId);
                 if (null != rb && checkedId > -1) {
+                    radioGrpText=rb.getText().toString();
                     Toast.makeText(RequestsActivity.this, rb.getText(), Toast.LENGTH_SHORT).show();
+                    if(rb.getText().toString().equalsIgnoreCase("Today")){
+                        allRequestRecyclerAdapter.requestListToShow=todayRequestList;
+                        allRequestRecyclerAdapter.notifyDataSetChanged();
+                    }
+                    else if(rb.getText().toString().equalsIgnoreCase("Upcoming")){
+                        allRequestRecyclerAdapter.requestListToShow=upcomingRequestList;
+                        allRequestRecyclerAdapter.notifyDataSetChanged();
+                    }
+                    else if(rb.getText().toString().equalsIgnoreCase("Completed")){
+                        allRequestRecyclerAdapter.requestListToShow=completedRequestList;
+                        allRequestRecyclerAdapter.notifyDataSetChanged();
+                    }
+                    else{
+                        allRequestRecyclerAdapter.requestListToShow=allRequestList;
+                        allRequestRecyclerAdapter.notifyDataSetChanged();
+                    }
                 }
             }
         });
@@ -102,6 +134,40 @@ public class RequestsActivity extends BaseActivity {
 
             }
         });
+
+        requestSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d("Ayush",radioGrpText);
+                if(radioGrpText.equalsIgnoreCase("all")){
+                    getSearchRequest(query,allRequestList);
+                }
+                else if(radioGrpText.equalsIgnoreCase("Today")){
+                    getSearchRequest(query,todayRequestList);
+                }
+                else if(radioGrpText.equalsIgnoreCase("Upcoming")){
+                    getSearchRequest(query,upcomingRequestList);
+                }
+                else{
+                    getSearchRequest(query,completedRequestList);
+                }
+                if(searchRequestList.length()==0){
+                    Toast.makeText(RequestsActivity.this,"Searched Item Not Found", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                        allRequestRecyclerAdapter.requestListToShow = searchRequestList;
+                        allRequestRecyclerAdapter.notifyDataSetChanged();
+
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
         setSearchTypeSpinner();
         searchTypeSpinner.setSelection(0);
         getRequestList();
@@ -138,8 +204,11 @@ public class RequestsActivity extends BaseActivity {
                         try {
                             Object customerObj=resultMap.get("data");
                             customerArray=new JSONArray(customerObj.toString());
-                            System.out.println(customerArray);
-                            allRequestRecyclerAdapter = new AllRequestRecyclerAdapter(getApplicationContext(),customerArray);
+                            allRequestList=customerArray;
+                            getTodayRequests();
+                            getUpcomingRequests();
+                            getCompletedRequests();
+                            allRequestRecyclerAdapter = new AllRequestRecyclerAdapter(getApplicationContext(),allRequestList);
                             requestsRecyclerView.setAdapter(allRequestRecyclerAdapter);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -175,6 +244,89 @@ public class RequestsActivity extends BaseActivity {
             }
         });
     }
+
+    public void getTodayRequests(){
+        todayRequestList=new JSONArray();
+        try {
+            for (int i = 0; i < allRequestList.length(); i++) {
+                JSONObject jsonObject = allRequestList.getJSONObject(i);
+                Timestamp requestDate=Timestamp.valueOf(jsonObject.get("requestDate").toString());
+                Calendar timeToCheck=Calendar.getInstance();
+                timeToCheck.setTime(requestDate);
+                Calendar now=Calendar.getInstance();
+                if(now.get(Calendar.DAY_OF_YEAR)==timeToCheck.get(Calendar.DAY_OF_YEAR) && now.get(Calendar.YEAR)==timeToCheck.get(Calendar.YEAR)){
+                    todayRequestList.put(jsonObject);
+                }
+            }
+        }catch (Exception e){
+            Log.d("Ayush","Exception in get Today's request");
+        }
+    }
+
+    public void getUpcomingRequests(){
+        upcomingRequestList=new JSONArray();
+        try {
+            for (int i = 0; i < allRequestList.length(); i++) {
+                JSONObject jsonObject = allRequestList.getJSONObject(i);
+                Timestamp requestDate=Timestamp.valueOf(jsonObject.get("requestDate").toString());
+                Calendar timeToCheck=Calendar.getInstance();
+                timeToCheck.setTime(requestDate);
+                Calendar now=Calendar.getInstance();
+                int status=jsonObject.getInt("status");
+                if(status==1){
+                    upcomingRequestList.put(jsonObject);
+                }
+            }
+        }catch (Exception e){
+            Log.d("Ayush","Exception in get Today's request");
+        }
+    }
+
+    public void getCompletedRequests(){
+        completedRequestList=new JSONArray();
+        try {
+            for (int i = 0; i < allRequestList.length(); i++) {
+                JSONObject jsonObject = allRequestList.getJSONObject(i);
+                int status=jsonObject.getInt("status");
+                if(status==5){
+                    completedRequestList.put(jsonObject);
+                }
+            }
+        }catch (Exception e){
+            Log.d("Ayush","Exception in get Today's request");
+        }
+    }
+
+    public void getSearchRequest(String searchText,JSONArray toSearchList){
+        searchRequestList=new JSONArray();
+            try {
+                for (int i = 0; i < toSearchList.length(); i++) {
+                    JSONObject jsonObject = toSearchList.getJSONObject(i);
+                    if(selectedSearchType.equalsIgnoreCase("pickUp Agent")){
+                        JSONObject pickUpAgent=new JSONObject(jsonObject.get("pickUpAgent").toString());
+                        if(pickUpAgent.get("name").toString().equalsIgnoreCase(searchText)){
+                            searchRequestList.put(jsonObject);
+                        }
+                    }
+                  else if(selectedSearchType.equalsIgnoreCase("pincode")){
+                        JSONObject reqAddress=new JSONObject(jsonObject.get("req_address").toString());
+                        if(reqAddress.get("pincode").toString().equalsIgnoreCase(searchText)){
+                            searchRequestList.put(jsonObject);
+                        }
+                    }
+                  else {
+                        JSONObject reqAddress=new JSONObject(jsonObject.get("req_address").toString());
+                        if(reqAddress.get("street").toString().equalsIgnoreCase(searchText)){
+                            searchRequestList.put(jsonObject);
+                        }
+                    }
+                }
+            }catch (Exception e){
+                Log.d("Ayush","Exception in get Today's request");
+            }
+
+    }
+
     private void setSearchTypeSpinner(){
         final List<String> searchTypeList = new ArrayList<>(Arrays.asList(searchType));
 
