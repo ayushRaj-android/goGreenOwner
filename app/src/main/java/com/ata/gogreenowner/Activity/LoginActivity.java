@@ -207,4 +207,4 @@ public class LoginActivity extends BaseActivity {
         updateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         updateDialog.show();
     }
-    }
+}

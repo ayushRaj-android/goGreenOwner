@@ -67,9 +67,9 @@ public class StepView extends View {
         this.cancelled = state;
         String[] steps;
         if(!state){
-            steps = new String[]{"Requested", "Go Green\nAgent\nAllocated", "Garbage\nCollected", "Money\nGiven"};
+            steps = new String[]{"Requested", "Pickup Boy\nAllocated", "Garbage\nCollected", "Money\nGiven"};
         }else {
-            steps = new String[]{"Requested", "Go Green\nAgent\nAllocated", "Garbage\nCollected", "Money\nGiven", "Cancelled"};
+            steps = new String[]{"Requested", "Pickup Boy\nAllocated", "Garbage\nCollected", "Money\nGiven", "Cancelled"};
         }
         setSteps(Arrays.asList(steps));
     }

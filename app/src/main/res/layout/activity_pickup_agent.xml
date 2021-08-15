@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".Activity.PickupAgentActivity"
     android:orientation="vertical"
+    android:id="@+id/mainPickupAgentLayout"
     android:background="@color/divider_color">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -67,5 +68,27 @@
             android:layout_height="match_parent"
             android:layout_below="@id/pickupAgentText"
             android:padding="10dp" />
+
+        <RelativeLayout
+            android:id="@+id/noPickupAgentLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone">
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_dash_pick_agent"
+                android:alpha=".5"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="You don't have any Pickup Agent"
+                android:textSize="20sp"
+                android:textColor="@color/svCancelColor"
+                android:textStyle="bold"/>
+        </RelativeLayout>
     </RelativeLayout>
 </LinearLayout>

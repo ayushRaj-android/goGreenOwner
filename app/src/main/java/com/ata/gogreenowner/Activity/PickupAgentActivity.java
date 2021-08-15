@@ -5,17 +5,26 @@ import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.ata.gogreenowner.Adapter.ApiClient;
 import com.ata.gogreenowner.Adapter.ApiInterface;
 import com.ata.gogreenowner.Adapter.PickupBoyRecyclerAdapter;
 import com.ata.gogreenowner.R;
 import com.ata.gogreenowner.Utility.SharedPreference;
+import com.bumptech.glide.Glide;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +46,11 @@ public class PickupAgentActivity extends BaseActivity {
     private AppCompatImageButton addPickupAgentButton;
     private SharedPreference sharedPreference;
     private Context context;
+    private RelativeLayout noPickupAgentLayout;
+    private Dialog updateDialog;
+    private LinearLayout mainPickupAgentLayout;
+    private Snackbar snackbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +58,7 @@ public class PickupAgentActivity extends BaseActivity {
         setContentView(R.layout.activity_pickup_agent);
 
         context = this;
+        mainPickupAgentLayout = findViewById(R.id.mainPickupAgentLayout);
         pickupAgentRecyclerView = findViewById(R.id.pick_agent_rv);
         pickUpBoySearchView = findViewById(R.id.pickup_search);
         pickupAgentRecyclerView.hasFixedSize();
@@ -51,7 +66,8 @@ public class PickupAgentActivity extends BaseActivity {
                 ,LinearLayoutManager.VERTICAL,false));
         addPickupAgentButton = findViewById(R.id.addPickupAgentButton);
         sharedPreference = new SharedPreference(this);
-
+        noPickupAgentLayout = findViewById(R.id.noPickupAgentLayout);
+        updateDialog = new Dialog(this);
         pickUpBoySearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -77,6 +93,7 @@ public class PickupAgentActivity extends BaseActivity {
         });
 
         addPickupAgentButton.setOnClickListener( v->{
+            snackbar.dismiss();
             Intent intent = new Intent(this,RegsiterPickupAgentActivity.class);
             startActivity(intent);
         });
@@ -86,6 +103,7 @@ public class PickupAgentActivity extends BaseActivity {
     }
 
     private void populatePickupAgent(){
+        showDialog("Loading your pickup Agents!");
         String pickupBoyJSONString = sharedPreference.getMyPickupBoy();
         if(pickupBoyJSONString != null){
             JSONArray jsonArray = null;
@@ -94,8 +112,10 @@ public class PickupAgentActivity extends BaseActivity {
                 pickupBoyRecyclerAdapter = new PickupBoyRecyclerAdapter(
                         context,jsonArray);
                 pickupAgentRecyclerView.setAdapter(pickupBoyRecyclerAdapter);
+                updateDialog.dismiss();
             } catch (JSONException e) {
-                e.printStackTrace();
+                showSnackbarAPI();
+                updateDialog.dismiss();
             }
         }else{
             ApiClient apiClient = new ApiClient(getApplicationContext());
@@ -113,27 +133,64 @@ public class PickupAgentActivity extends BaseActivity {
                             JSONArray jsonArray = null;
                             try {
                                 jsonArray = new JSONArray(pickupBoyJSONString);
-                                pickupBoyRecyclerAdapter = new PickupBoyRecyclerAdapter(
-                                        context,jsonArray);
-                                pickupAgentRecyclerView.setAdapter(pickupBoyRecyclerAdapter);
-                                sharedPreference.insertMyPickupBoy(pickupBoyJSONString);
+                                if(jsonArray.length() != 0) {
+                                    pickupBoyRecyclerAdapter = new PickupBoyRecyclerAdapter(
+                                            context, jsonArray);
+                                    pickupAgentRecyclerView.setAdapter(pickupBoyRecyclerAdapter);
+                                    sharedPreference.insertMyPickupBoy(pickupBoyJSONString);
+                                    updateDialog.dismiss();
+                                }else{
+                                    pickupAgentRecyclerView.setVisibility(View.GONE);
+                                    noPickupAgentLayout.setVisibility(View.VISIBLE);
+                                    updateDialog.dismiss();
+                                }
                             } catch (JSONException e) {
-                                e.printStackTrace();
+                                showSnackbarAPI();
+                                updateDialog.dismiss();
                             }
-                            Log.d("Ayush",jsonArray.toString());
-
                         }
                     }else{
-
+                        showSnackbarAPI();
+                        updateDialog.dismiss();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<HashMap<Object, Object>> call, Throwable t) {
-
+                    showSnackbarAPI();
+                    updateDialog.dismiss();
                 }
             });
         }
+
+    }
+
+    private void showDialog(String text) {
+        ImageView dialog_image;
+        TextView dialog_text;
+        updateDialog.setContentView(R.layout.loading_popup);
+        updateDialog.setCanceledOnTouchOutside(false);
+        updateDialog.setCancelable(false);
+        dialog_image = updateDialog.findViewById(R.id.loading_image);
+        dialog_text = updateDialog.findViewById(R.id.loading_text);
+        Glide.with(this).load(R.drawable.ic_dash_pick_agent).into(dialog_image);
+        dialog_text.setText(text);
+        updateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        updateDialog.show();
+    }
+
+    private void showSnackbarAPI(){
+        snackbar = Snackbar.make(mainPickupAgentLayout,"Something went wrong!",
+                Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction("RETRY", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                snackbar.dismiss();
+                populatePickupAgent();
+            }
+        });
+        snackbar.show();
+        snackbar.setActionTextColor(Color.RED);
 
     }
 
