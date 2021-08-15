@@ -21,6 +21,7 @@ import com.ata.gogreenowner.Adapter.ApiClient;
 import com.ata.gogreenowner.Adapter.ApiInterface;
 import com.ata.gogreenowner.Adapter.PendingRequestRecyclerAdapter;
 import com.ata.gogreenowner.Adapter.PickupBoyPopupRecyclerAdapter;
+import com.ata.gogreenowner.Adapter.PickupBoyRecyclerAdapter;
 import com.ata.gogreenowner.Model.PendingRequests;
 import com.ata.gogreenowner.R;
 import com.ata.gogreenowner.Utility.PendingRequestListener;
@@ -55,6 +56,7 @@ public class PendingRequestActivity extends AppCompatActivity implements Pending
     private Dialog updateDialog;
     TextView errorTV;
     SharedPreference sharedPreference;
+    private JSONArray pickupAgentList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,20 +122,13 @@ public class PendingRequestActivity extends AppCompatActivity implements Pending
         popupRecyclerView.setLayoutManager(new LinearLayoutManager(this
                 ,LinearLayoutManager.VERTICAL,false));
         List<JSONObject> jsonObjectList = new ArrayList<>();
-        JSONObject jsonObject = new JSONObject();
-        JSONObject jsonObject1 = new JSONObject();
-        try {
-            jsonObject.put("name", "Ayush Raj");
-            jsonObject.put("phone", "6201124947");
-            jsonObject.put("profilePicUrl","https://lh3.googleusercontent.com/ogw/ADea4I4L3sCPJteJTIDnbQqV7jH6JH6tBaPGlFrLfDvOuw=s192-c-mo");
-
-            jsonObject1.put("name", "Ayushi Poddar");
-            jsonObject1.put("phone", "8084805576");
-            jsonObject1.put("profilePicUrl","http://lh6.ggpht.com/_9F9_RUESS2E/S-AtYGxVAdI/AAAAAAAACvE/mpfyMoyqDSw/s800/sarolta-ban-surreal-16.jpg");
-            jsonObjectList.add(jsonObject);
-            jsonObjectList.add(jsonObject1);
-        }catch (Exception e){
-            e.printStackTrace();
+        getPickupAgentList();
+        for(int i=0;i<pickupAgentList.length();i++){
+            try {
+                jsonObjectList.add(pickupAgentList.getJSONObject(i));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         pickupBoyPopupRecyclerAdapter = new PickupBoyPopupRecyclerAdapter(getApplicationContext(),
                 jsonObjectList,assignPickupDialog);
@@ -167,6 +162,53 @@ public class PendingRequestActivity extends AppCompatActivity implements Pending
         });
         cross.setOnClickListener(v1 -> assignPickupDialog.dismiss());
         assignPickupDialog.show();
+    }
+
+    private void getPickupAgentList(){
+        String pickupBoyJSONString = sharedPreference.getMyPickupBoy();
+        if(pickupBoyJSONString != null){
+            try {
+                pickupAgentList = new JSONArray(pickupBoyJSONString);
+                updateDialog.dismiss();
+            } catch (JSONException e) {
+                updateDialog.dismiss();
+            }
+        }else{
+            ApiClient apiClient = new ApiClient(getApplicationContext());
+            ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+            String jwtToken = "Bearer " + sharedPreference.getJwtToken();
+            Call<HashMap<Object,Object>> call = apiService.getMyPickupBoy(jwtToken);
+            call.enqueue(new Callback<HashMap<Object, Object>>() {
+                @Override
+                public void onResponse(Call<HashMap<Object, Object>> call, Response<HashMap<Object, Object>> response) {
+                    if(response.isSuccessful() && response.body() != null){
+                        HashMap<Object,Object> resultMap = response.body();
+                        int statusCode = (int)(double)resultMap.get("statusCode");
+                        if(statusCode == 1){
+                            String pickupBoyJSONString = resultMap.get("message").toString();
+                            try {
+                                pickupAgentList= new JSONArray(pickupBoyJSONString);
+                                if(pickupAgentList.length() != 0) {
+                                    sharedPreference.insertMyPickupBoy(pickupBoyJSONString);
+                                    updateDialog.dismiss();
+                                }else{
+                                    updateDialog.dismiss();
+                                }
+                            } catch (JSONException e) {
+                                updateDialog.dismiss();
+                            }
+                        }
+                    }else{
+                        updateDialog.dismiss();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<HashMap<Object, Object>> call, Throwable t) {
+                    updateDialog.dismiss();
+                }
+            });
+        }
     }
 
     private void getPendingRequestList(){
