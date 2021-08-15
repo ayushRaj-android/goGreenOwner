@@ -59,7 +59,6 @@ public class PickupBoyRecyclerAdapter extends RecyclerView.Adapter<PickupBoyRecy
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         try {
             JSONObject jsonObject = changingList.getJSONObject(position);
-            Log.d("Ayush",position+" "+jsonObject.toString());
             holder.agentName.setText(jsonObject.get("name").toString());
             holder.agentPhone.setText(jsonObject.get("phone").toString().substring(2));
             String url = jsonObject.get("profilePic").toString();
@@ -140,6 +139,9 @@ public class PickupBoyRecyclerAdapter extends RecyclerView.Adapter<PickupBoyRecy
     }
 
     public void filter(String filterWord) {
+        if(mainList.length() == 0){
+            return;
+        }
         changingList = new JSONArray();
         if (filterWord == null || filterWord.length() == 0) {
             changingList = mainList;

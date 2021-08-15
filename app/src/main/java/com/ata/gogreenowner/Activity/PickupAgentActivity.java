@@ -34,7 +34,6 @@ public class PickupAgentActivity extends BaseActivity {
     private RecyclerView pickupAgentRecyclerView;
     private PickupBoyRecyclerAdapter pickupBoyRecyclerAdapter;
     private SearchView pickUpBoySearchView;
-    List<JSONObject> jsonObjectList = new ArrayList<>();
     private AppCompatImageButton addPickupAgentButton;
     private SharedPreference sharedPreference;
     private Context context;
@@ -56,9 +55,7 @@ public class PickupAgentActivity extends BaseActivity {
         pickUpBoySearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if (jsonObjectList.size() != 0) {
-                    pickupBoyRecyclerAdapter.filter(query.toLowerCase());
-                }
+                pickupBoyRecyclerAdapter.filter(query.toLowerCase());
                 return false;
             }
 
@@ -71,11 +68,9 @@ public class PickupAgentActivity extends BaseActivity {
         ImageView clearButton = pickUpBoySearchView.findViewById(androidx.appcompat.R.id.search_close_btn);
         clearButton.setOnClickListener(v -> {
             if(pickUpBoySearchView.getQuery().length() == 0) {
-                Log.d("Ayush","CLicked!");
                 pickUpBoySearchView.setQuery("", false);
                 pickUpBoySearchView.setIconified(true);
             } else {
-                Log.d("Ayush","CLicked123!");
                 pickUpBoySearchView.setQuery("", false);
                 pickupBoyRecyclerAdapter.filter(null);
             }
