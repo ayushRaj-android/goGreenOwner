@@ -6,7 +6,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,16 +24,26 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ata.gogreenowner.Activity.PickupAgentActivity;
+import com.ata.gogreenowner.Activity.RequestsActivity;
 import com.ata.gogreenowner.R;
+import com.ata.gogreenowner.Utility.SharedPreference;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PickupBoyPopupRecyclerAdapter extends RecyclerView.Adapter<PickupBoyPopupRecyclerAdapter.ViewHolder> {
 
@@ -37,13 +51,18 @@ public class PickupBoyPopupRecyclerAdapter extends RecyclerView.Adapter<PickupBo
     private List<JSONObject> changingList;
     private List<JSONObject> mainList;
     private Dialog dialog;
+    private List<String> selectedRequestIdList;
+    private SharedPreference sharedPreference;
 
-    public PickupBoyPopupRecyclerAdapter(Context context, List<JSONObject> jsonObjectList,Dialog dialog) {
+    public PickupBoyPopupRecyclerAdapter(Context context, List<JSONObject> jsonObjectList
+            ,Dialog dialog,List<String> selectedRequestIdList) {
         this.context = context;
         this.changingList = jsonObjectList;
         this.dialog = dialog;
+        this.selectedRequestIdList = selectedRequestIdList;
         mainList = new ArrayList<>();
         mainList.addAll(jsonObjectList);
+        sharedPreference = new SharedPreference(context);
     }
 
     @NonNull
@@ -77,14 +96,15 @@ public class PickupBoyPopupRecyclerAdapter extends RecyclerView.Adapter<PickupBo
 
         public void bindJSONObject(JSONObject jsonObject){
             try {
-                String url = jsonObject.getString("profilePicUrl");
-                Log.d("Ayush",url);
-                Glide.with(context).load(url).optionalCircleCrop().into(profilePic);
+                String url = jsonObject.getString("profilePic");
+                Glide.with(context).load(url).apply(RequestOptions.circleCropTransform()).optionalCircleCrop().into(profilePic);
                 agentName.setText(jsonObject.get("name").toString());
                 assignButton.setOnClickListener( v->{
-                    Log.d("Ayush",jsonObject.toString());
-                    //dialog.dismiss();
-                    showLodingPopup();
+                    try {
+                        callAssignPickupApi(Long.parseLong(jsonObject.get("id").toString()));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 });
             }catch (Exception e){
                 e.printStackTrace();
@@ -114,7 +134,72 @@ public class PickupBoyPopupRecyclerAdapter extends RecyclerView.Adapter<PickupBo
     }
 
     public void showLodingPopup(){
+        ImageView dialog_image;
+        TextView dialog_text;
         dialog.setContentView(R.layout.loading_popup);
-        //assignPickupDialog.setCanceledOnTouchOutside(false);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog_image = dialog.findViewById(R.id.loading_image);
+        dialog_text = dialog.findViewById(R.id.loading_text);
+        Glide.with(context).load(R.drawable.loader).into(dialog_image);
+        dialog_text.setText("Assigning Pickup Agent");
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+    }
+
+    private void showSuccessDialog(){
+        ImageView dialog_image;
+        TextView dialog_text;
+        dialog.setContentView(R.layout.loading_popup);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog_image = dialog.findViewById(R.id.loading_image);
+        dialog_text = dialog.findViewById(R.id.loading_text);
+        Glide.with(context).load(R.drawable.ic_baseline_check_circle_outline_24).into(dialog_image);
+        dialog_text.setText("Pickup Boy Assigned to the request!\nRedirecting in 5 seconds");
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+    }
+
+    public void callAssignPickupApi(long id){
+        showLodingPopup();
+        ApiClient apiClient = new ApiClient(context);
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        String jwtToken = "Bearer " + sharedPreference.getJwtToken();
+        Call<HashMap<Object,Object>> call = apiService.assignPickupBoy(jwtToken,
+                selectedRequestIdList,id);
+        call.enqueue(new Callback<HashMap<Object, Object>>() {
+            @Override
+            public void onResponse(Call<HashMap<Object, Object>> call, Response<HashMap<Object, Object>> response) {
+                Log.d("Ayush",response.toString());
+                if(response.isSuccessful() && response.body() != null){
+                    HashMap<Object,Object> resultMap = response.body();
+                    int statusCode = (int)(double)resultMap.get("statusCode");
+                    Log.d("Ayush",statusCode+"");
+                    if(statusCode == 2){
+                        dialog.dismiss();
+                        showSuccessDialog();
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                //Do something here
+                                Intent intent = new Intent(context, RequestsActivity.class);
+                                context.startActivity(intent);
+                                ((Activity)context).finish();
+                            }
+                        }, 5000);
+                    }else{
+                        dialog.dismiss();
+                    }
+                }else{
+                    dialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<HashMap<Object, Object>> call, Throwable t) {
+
+            }
+        });
     }
 }

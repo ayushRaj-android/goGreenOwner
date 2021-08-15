@@ -5,6 +5,7 @@ import com.ata.gogreenowner.Model.JunkYardOwnerDeviceFCM;
 import com.ata.gogreenowner.Model.LoginObject;
 
 import java.util.HashMap;
+import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -68,5 +69,10 @@ public interface ApiInterface {
 
     @GET("/junkYardOwner/getMyPickupBoy")
     Call<HashMap<Object,Object>> getMyPickupBoy(@Header("Authorization") String jwtToken);
+
+    @GET("/junkYardOwner/assignPickupBoy")
+    Call<HashMap<Object,Object>> assignPickupBoy(@Header("Authorization") String jwtToken,
+                                                 @Query("requestId") List<String> requestId,
+                                                 @Query("pickupBoyId") long pickupBoyId);
 
 }

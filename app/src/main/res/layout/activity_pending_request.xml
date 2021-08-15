@@ -60,10 +60,36 @@
                 android:clickable="true"
                 android:textColor="@color/svCancelColor"/>
         </RelativeLayout>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/pending_request_rv"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/pending_request_rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <RelativeLayout
+                android:id="@+id/noPendingRequestLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="gone">
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_dash_pending_request"
+                    android:alpha=".5"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="You don't have any Pending Request"
+                    android:textSize="20sp"
+                    android:textColor="@color/svCancelColor"
+                    android:textStyle="bold"/>
+            </RelativeLayout>
+        </RelativeLayout>
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatButton
