@@ -17,7 +17,7 @@ public class SharedPreference {
     private static final String KEY_USER_FCM_TOKEN = "fcmToken";
     private static final String JWT_TOKEN = "jwtToken";
     private static final String REFRESH_TOKEN = "refreshToken";
-    private static final String MY_ADDRESS = "savedAddress";
+    private static final String MY_PICKUP_BOY = "myPickupBoy";
     private static final String TOTAL_EARNING = "totalEarning";
     private static final String TOTAL_REQUEST = "totalRequest";
 
@@ -47,8 +47,8 @@ public class SharedPreference {
         editor.commit();
     }
 
-    public void insertMyAddress(String address){
-        editor.putString(MY_ADDRESS,address);
+    public void insertMyPickupBoy(String pickupBoyJsonString){
+        editor.putString(MY_PICKUP_BOY,pickupBoyJsonString);
         editor.commit();
     }
 
@@ -62,8 +62,8 @@ public class SharedPreference {
         editor.commit();
     }
 
-    public void removeMyAddress(){
-        editor.putString(MY_ADDRESS,null);
+    public void removeMyPickupBoy(){
+        editor.putString(MY_PICKUP_BOY,null);
         editor.commit();
     }
 
@@ -111,8 +111,8 @@ public class SharedPreference {
         return  preferences.getString(REFRESH_TOKEN,null);
     }
 
-    public String getMyAddress(){
-        return  preferences.getString(MY_ADDRESS,null);
+    public String getMyPickupBoy(){
+        return  preferences.getString(MY_PICKUP_BOY,null);
     }
 
     public String getTotalRequest(){

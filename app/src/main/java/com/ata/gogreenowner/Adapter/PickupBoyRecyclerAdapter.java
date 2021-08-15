@@ -27,6 +27,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,15 +38,14 @@ public class PickupBoyRecyclerAdapter extends RecyclerView.Adapter<PickupBoyRecy
         implements ActivityCompat.OnRequestPermissionsResultCallback{
 
     private Context context;
-    private List<JSONObject> changingList;
-    private List<JSONObject> mainList;
+    private JSONArray changingList;
+    private JSONArray mainList;
     private static final int PHONE_REQUEST_CODE = 105;
 
-    public PickupBoyRecyclerAdapter(Context context, List<JSONObject> jsonObjectList) {
+    public PickupBoyRecyclerAdapter(Context context, JSONArray jsonObjectList) {
         this.context = context;
         this.changingList = jsonObjectList;
-        mainList = new ArrayList<>();
-        mainList.addAll(jsonObjectList);
+        this.mainList = jsonObjectList;
     }
 
     @NonNull
@@ -57,8 +57,9 @@ public class PickupBoyRecyclerAdapter extends RecyclerView.Adapter<PickupBoyRecy
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        JSONObject jsonObject = changingList.get(position);
         try {
+            JSONObject jsonObject = changingList.getJSONObject(position);
+            Log.d("Ayush",position+" "+jsonObject.toString());
             holder.agentName.setText(jsonObject.get("name").toString());
             holder.agentPhone.setText(jsonObject.get("phone").toString());
             String url = jsonObject.get("profilePicUrl").toString();
@@ -77,7 +78,7 @@ public class PickupBoyRecyclerAdapter extends RecyclerView.Adapter<PickupBoyRecy
 
     @Override
     public int getItemCount() {
-        return changingList.size();
+        return changingList.length();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -139,19 +140,20 @@ public class PickupBoyRecyclerAdapter extends RecyclerView.Adapter<PickupBoyRecy
     }
 
     public void filter(String filterWord) {
-        changingList.clear();
+        changingList = new JSONArray();
         if (filterWord == null || filterWord.length() == 0) {
-            changingList.addAll(mainList);
+            changingList = mainList;
         } else {
             try {
-                for (JSONObject jsonObject : mainList) {
+                for (int i=0;i< mainList.length();i++) {
+                    JSONObject jsonObject = mainList.getJSONObject(i);
                     if (jsonObject.get("name").toString().toLowerCase().startsWith(filterWord)){
                         Log.d("Ayush",jsonObject.get("name").toString());
-                        changingList.add(jsonObject);
+                        changingList.put(jsonObject);
                     }
                 }
             }catch (Exception e){
-                changingList.addAll(mainList);
+                changingList = mainList;
                 e.printStackTrace();
             }
         }

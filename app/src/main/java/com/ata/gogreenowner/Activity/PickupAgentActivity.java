@@ -1,31 +1,41 @@
 package com.ata.gogreenowner.Activity;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.Toast;
 
+import com.ata.gogreenowner.Adapter.ApiClient;
+import com.ata.gogreenowner.Adapter.ApiInterface;
 import com.ata.gogreenowner.Adapter.PickupBoyRecyclerAdapter;
 import com.ata.gogreenowner.R;
+import com.ata.gogreenowner.Utility.SharedPreference;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
 
-public class PickupAgentActivity extends AppCompatActivity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class PickupAgentActivity extends BaseActivity {
 
     private RecyclerView pickupAgentRecyclerView;
     private PickupBoyRecyclerAdapter pickupBoyRecyclerAdapter;
     private SearchView pickUpBoySearchView;
     List<JSONObject> jsonObjectList = new ArrayList<>();
+    private AppCompatImageButton addPickupAgentButton;
+    private SharedPreference sharedPreference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,24 +47,8 @@ public class PickupAgentActivity extends AppCompatActivity {
         pickupAgentRecyclerView.hasFixedSize();
         pickupAgentRecyclerView.setLayoutManager(new LinearLayoutManager(this
                 ,LinearLayoutManager.VERTICAL,false));
-
-        JSONObject jsonObject = new JSONObject();
-        JSONObject jsonObject1 = new JSONObject();
-        try {
-            jsonObject.put("name", "Ayush Raj");
-            jsonObject.put("phone", "6201124947");
-            jsonObject.put("profilePicUrl","https://www.vhv.rs/dpng/d/63-630699_kite-png-under-100kb-transparent-png.png");
-
-            jsonObject1.put("name", "Ayushi Poddar");
-            jsonObject1.put("phone", "8084805576");
-            jsonObject1.put("profilePicUrl","http://lh6.ggpht.com/_9F9_RUESS2E/S-AtYGxVAdI/AAAAAAAACvE/mpfyMoyqDSw/s800/sarolta-ban-surreal-16.jpg");
-            jsonObjectList.add(jsonObject);
-            jsonObjectList.add(jsonObject1);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        pickupBoyRecyclerAdapter = new PickupBoyRecyclerAdapter(this,jsonObjectList);
-        pickupAgentRecyclerView.setAdapter(pickupBoyRecyclerAdapter);
+        addPickupAgentButton = findViewById(R.id.addPickupAgentButton);
+        sharedPreference = new SharedPreference(this);
 
         pickUpBoySearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -83,6 +77,65 @@ public class PickupAgentActivity extends AppCompatActivity {
                 pickupBoyRecyclerAdapter.filter(null);
             }
         });
+
+        addPickupAgentButton.setOnClickListener( v->{
+            Intent intent = new Intent(this,RegsiterPickupAgentActivity.class);
+            startActivity(intent);
+        });
+
+        populatePickupAgent();
+
+    }
+
+    private void populatePickupAgent(){
+        String pickupBoyJSONString = sharedPreference.getMyPickupBoy();
+        if(pickupBoyJSONString != null){
+            JSONArray jsonArray = null;
+            try {
+                jsonArray = new JSONArray(pickupBoyJSONString);
+                pickupBoyRecyclerAdapter = new PickupBoyRecyclerAdapter(
+                        getApplicationContext(),jsonArray);
+                pickupAgentRecyclerView.setAdapter(pickupBoyRecyclerAdapter);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }else{
+            ApiClient apiClient = new ApiClient(getApplicationContext());
+            ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+            String jwtToken = "Bearer " + sharedPreference.getJwtToken();
+            Call<HashMap<Object,Object>> call = apiService.getMyPickupBoy(jwtToken);
+            call.enqueue(new Callback<HashMap<Object, Object>>() {
+                @Override
+                public void onResponse(Call<HashMap<Object, Object>> call, Response<HashMap<Object, Object>> response) {
+                    if(response.isSuccessful() && response.body() != null){
+                        HashMap<Object,Object> resultMap = response.body();
+                        int statusCode = (int)(double)resultMap.get("statusCode");
+                        if(statusCode == 1){
+                            String pickupBoyJSONString = resultMap.get("message").toString();
+                            JSONArray jsonArray = null;
+                            try {
+                                jsonArray = new JSONArray(pickupBoyJSONString);
+                                pickupBoyRecyclerAdapter = new PickupBoyRecyclerAdapter(
+                                        getApplicationContext(),jsonArray);
+                                pickupAgentRecyclerView.setAdapter(pickupBoyRecyclerAdapter);
+                                sharedPreference.insertMyPickupBoy(pickupBoyJSONString);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            Log.d("Ayush",jsonArray.toString());
+
+                        }
+                    }else{
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<HashMap<Object, Object>> call, Throwable t) {
+
+                }
+            });
+        }
 
     }
 

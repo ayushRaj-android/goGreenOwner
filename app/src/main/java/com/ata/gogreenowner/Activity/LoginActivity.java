@@ -183,7 +183,7 @@ public class LoginActivity extends BaseActivity {
                     if(statusCode == 1){
                         if(resultMap.get("message") != null) {
                             String addresses = resultMap.get("message").toString();
-                            sharedPreference.insertMyAddress(addresses);
+//                            sharedPreference.insertMyAddress(addresses);
                         }
                     }
                 }

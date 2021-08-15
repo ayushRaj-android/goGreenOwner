@@ -143,6 +143,10 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
         editText_five.addTextChangedListener(this);
         editText_six.addTextChangedListener(this);
 
+        registerFormLayout.setVisibility(View.VISIBLE);
+        otpLayout.setVisibility(View.GONE);
+
+
         uploadPhotoText.setOnClickListener( v->{
             selectImage("photo");
         });
@@ -421,7 +425,7 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
             file.createNewFile();
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 0 /*ignored for PNG*/, bos);
             byte[] bitmapdata = bos.toByteArray();
 
             FileOutputStream fos = new FileOutputStream(file);

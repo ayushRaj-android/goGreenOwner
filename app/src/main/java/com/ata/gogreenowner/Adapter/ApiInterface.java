@@ -47,7 +47,7 @@ public interface ApiInterface {
     );
 
     @Multipart
-    @POST("/auth/junkYardOwner/registerPickupBoy")
+    @POST("/junkYardOwner/registerPickupBoy")
     Call<HashMap<Object,Object>> registerPickupBoy(@Header("Authorization") String jwtToken,
                                                @Part MultipartBody.Part profilePic,
                                                @Part MultipartBody.Part idPic,
@@ -55,9 +55,12 @@ public interface ApiInterface {
                                                @Part("phoneNumber") RequestBody phoneNumber,
                                                @Part("localIdNumber") RequestBody localIdNumber);
 
-    @GET("/auth/junkyard/verifyPickupBoy")
+    @GET("/junkYardOwner/verifyPickupBoy")
     Call<HashMap<Object,Object>> verifyPickupBoy(@Header("Authorization") String jwtToken,
                                                  @Query("otp") String otp,
                                                  @Query("phoneNumber") String phoneNumber);
+
+    @GET("/junkYardOwner/getMyPickupBoy")
+    Call<HashMap<Object,Object>> getMyPickupBoy(@Header("Authorization") String jwtToken);
 
 }
