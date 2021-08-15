@@ -27,11 +27,11 @@ import java.text.SimpleDateFormat;
 public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRecyclerAdapter.ViewHolder> {
 
     Context context;
-    JSONArray requestList;
+    public JSONArray requestListToShow;
 
     public AllRequestRecyclerAdapter(Context context, JSONArray requestList) {
         this.context = context;
-        this.requestList = requestList;
+        this.requestListToShow = requestList;
     }
 
     @NonNull
@@ -44,7 +44,7 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         try {
-            holder.bindViewHolder(requestList.getJSONObject(position));
+            holder.bindViewHolder(requestListToShow.getJSONObject(position));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -52,7 +52,7 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
 
     @Override
     public int getItemCount() {
-        return requestList.length();
+        return requestListToShow.length();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -78,10 +78,10 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
                 address_tv.setText(addressObj.getString("street"));
                 Timestamp requestDate=Timestamp.valueOf(jsonObject.get("requestDate").toString());
                 Date date=new Date(requestDate.getTime());
-                String timeStamp = new SimpleDateFormat("dd-MMM-yyyy").format(date);
-                String dayWeekText = new SimpleDateFormat("EE").format(date);
-                order_placement_time.setText(dayWeekText+" "+timeStamp);
+                String timeStamp = new SimpleDateFormat("EE, dd-MMM-yyyy").format(date);
+                order_placement_time.setText(timeStamp);
                 int status=jsonObject.getInt("status");
+
                 if(status==0){
                     step_view.selectedStep(1);
                     weightValueTab.setVisibility(View.GONE);
@@ -94,6 +94,7 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
                 }
                 else if(status==3){
                     step_view.selectedStep(3);
+
                 }
                 else if(status==5){
                     step_view.selectedStep(4);
@@ -109,6 +110,4 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
         }
 
     }
-
-
 }
