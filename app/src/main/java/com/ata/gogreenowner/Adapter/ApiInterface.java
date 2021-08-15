@@ -46,7 +46,7 @@ public interface ApiInterface {
             @Header("Authorization") String authHeader
     );
 
-    @GET("/auth/junkYardOwner/getPendingRequestList")
+    @GET("/junkYardOwner/getPendingRequestList")
     Call<HashMap<Object,Object>> getPendingRequestList(
             @Header("Authorization") String authHeader,
             @Query("pageNo") int pageNo
