@@ -3,6 +3,7 @@ package com.ata.gogreenowner.Activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.SearchView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +27,8 @@ import com.ata.gogreenowner.Model.PendingRequests;
 import com.ata.gogreenowner.R;
 import com.ata.gogreenowner.Utility.PendingRequestListener;
 import com.ata.gogreenowner.Utility.SharedPreference;
+import com.bumptech.glide.Glide;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,8 +45,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PendingRequestActivity extends AppCompatActivity implements PendingRequestListener {
+public class PendingRequestActivity extends BaseActivity implements PendingRequestListener {
 
+    private ConstraintLayout pendingReqMainLayout;
     private RecyclerView pendingRequestRV;
     private PendingRequestRecyclerAdapter pendingRequestRecyclerAdapter;
     private AppCompatButton assignPickupBoyButton;
@@ -54,7 +58,6 @@ public class PendingRequestActivity extends AppCompatActivity implements Pending
     private JSONArray pendingRequestArray;
     private List<PendingRequests> pendingRequestsList;
     private Dialog updateDialog;
-    TextView errorTV;
     SharedPreference sharedPreference;
     private JSONArray pickupAgentList;
 
@@ -63,7 +66,7 @@ public class PendingRequestActivity extends AppCompatActivity implements Pending
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pending_request);
 
-        errorTV = findViewById(R.id.errorTV);
+        pendingRequestsList = findViewById(R.id.pending_req_main_layout);
         updateDialog = new Dialog(this);
         sharedPreference=new SharedPreference(this);
         pendingRequestsList=new ArrayList<>();
@@ -212,6 +215,7 @@ public class PendingRequestActivity extends AppCompatActivity implements Pending
     }
 
     private void getPendingRequestList(){
+        showDialog("Getting Pending Requests!");
         ApiClient apiClient = new ApiClient(getApplicationContext());
         ApiInterface apiService = apiClient.getClient().create(ApiInterface.class);
 
@@ -221,21 +225,11 @@ public class PendingRequestActivity extends AppCompatActivity implements Pending
             @Override
             public void onResponse(Call<HashMap<Object, Object>> call,
                                    Response<HashMap<Object, Object>> response) {
-                Log.d("Ayush",response.toString());
                 if(response.isSuccessful() && response.body()!=null){
                     HashMap<Object, Object> resultMap = response.body();
                     int statusCode = (int) (double) resultMap.get("statusCode");
-                    Log.d("Ayush", String.valueOf(statusCode));
                     if (statusCode == -1) {
                         updateDialog.dismiss();
-                        errorTV.setVisibility(View.VISIBLE);
-                        errorTV.setText("Owner Invalid");
-                        errorTV.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                errorTV.setVisibility(View.GONE);
-                            }
-                        }, 5000);
                     }
                     else if(statusCode==2){
                         try {
@@ -246,7 +240,6 @@ public class PendingRequestActivity extends AppCompatActivity implements Pending
                                 PendingRequests pendingRequests=createPendingRequest(pendingRequestObj);
                                 pendingRequestsList.add(pendingRequests);
                             }
-                            Log.d("Ayush",pendingRequestsList.toString());
                             pendingRequestRecyclerAdapter = new PendingRequestRecyclerAdapter(getApplicationContext(),
                                     pendingRequestsList,PendingRequestActivity.this::onAssignPickupBoyAction);
                             pendingRequestRV.setAdapter(pendingRequestRecyclerAdapter);
@@ -257,30 +250,18 @@ public class PendingRequestActivity extends AppCompatActivity implements Pending
                     }
                     else{
                         updateDialog.dismiss();
-                        errorTV.setVisibility(View.VISIBLE);
-                        errorTV.setText("Internal Server Exception");
-                        errorTV.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                errorTV.setVisibility(View.GONE);
-                            }
-                        }, 5000);
+                        showSnackbarAPI();
                     }
                 }
                 else {
                     updateDialog.dismiss();
-                    errorTV.setVisibility(View.VISIBLE);
-                    errorTV.setText("Internal Server Exception");
-                    errorTV.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            errorTV.setVisibility(View.GONE);
-                        }
-                    }, 5000);
+                    showSnackbarAPI();
                 }
             }
             @Override
             public void onFailure(Call<HashMap<Object, Object>> call, Throwable t) {
+                updateDialog.dismiss();
+                showSnackbarAPI();
             }
         });
     }
@@ -307,5 +288,34 @@ public class PendingRequestActivity extends AppCompatActivity implements Pending
             Log.d("Ayush","Error while creating pending request obj from json");
         }
         return new PendingRequests("",false);
+    }
+
+    private void showDialog(String text) {
+        ImageView dialog_image;
+        TextView dialog_text;
+        updateDialog.setContentView(R.layout.loading_popup);
+        updateDialog.setCanceledOnTouchOutside(false);
+        updateDialog.setCancelable(false);
+        dialog_image = updateDialog.findViewById(R.id.loading_image);
+        dialog_text = updateDialog.findViewById(R.id.loading_text);
+        Glide.with(this).load(R.drawable.ic_dash_pending_request).into(dialog_image);
+        dialog_text.setText(text);
+        updateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        updateDialog.show();
+    }
+
+    private void showSnackbarAPI(){
+        snackbar = Snackbar.make(pendingReqMainLayout,"Something went wrong!",
+                Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction("RETRY", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                snackbar.dismiss();
+                getPendingRequestList();
+            }
+        });
+        snackbar.show();
+        snackbar.setActionTextColor(Color.RED);
+
     }
 }
