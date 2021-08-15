@@ -41,12 +41,12 @@ public interface ApiInterface {
                                                 @Body JunkYardOwnerDeviceFCM junkYardOwnerDeviceFCM);
 
 
-    @GET("/auth/junkYardOwner/getRequestList")
+    @GET("/junkYardOwner/getRequestList")
     Call<HashMap<Object,Object>> getRequestList(
             @Header("Authorization") String authHeader
     );
 
-    @GET("/auth/junkYardOwner/getPendingRequestList")
+    @GET("/junkYardOwner/getPendingRequestList")
     Call<HashMap<Object,Object>> getPendingRequestList(
             @Header("Authorization") String authHeader,
             @Query("pageNo") int pageNo
