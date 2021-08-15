@@ -46,6 +46,12 @@ public interface ApiInterface {
             @Header("Authorization") String authHeader
     );
 
+    @GET("/auth/junkYardOwner/getPendingRequestList")
+    Call<HashMap<Object,Object>> getPendingRequestList(
+            @Header("Authorization") String authHeader,
+            @Query("pageNo") int pageNo
+    );
+
     @Multipart
     @POST("/junkYardOwner/registerPickupBoy")
     Call<HashMap<Object,Object>> registerPickupBoy(@Header("Authorization") String jwtToken,

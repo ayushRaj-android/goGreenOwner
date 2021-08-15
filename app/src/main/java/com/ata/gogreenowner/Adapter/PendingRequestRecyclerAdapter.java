@@ -89,10 +89,16 @@ public class PendingRequestRecyclerAdapter extends RecyclerView.Adapter<PendingR
             addressTextView = itemView.findViewById(R.id.address_tv);
             pendingReqCheckBox = itemView.findViewById(R.id.pending_req_card_cb);
             cardContentLayout = itemView.findViewById(R.id.cardContentLayout);
+            requestedOnTextView=itemView.findViewById(R.id.order_placement_time);
+            requestDateTextView=itemView.findViewById(R.id.request_date);
+            requestTimeTextView=itemView.findViewById(R.id.request_time);
         }
 
         void bindPendingRequest(PendingRequests pendingRequests){
-//            addressTextView.setText(pendingRequests.getAddress());
+            addressTextView.setText(pendingRequests.getAddress());
+            requestedOnTextView.setText(pendingRequests.getRequestedOn());
+            requestDateTextView.setText(pendingRequests.getRequestDate());
+            requestTimeTextView.setText(pendingRequests.getRequestTime());
             if(pendingRequests.isSelected()){
                 pendingReqCheckBox.setChecked(true);
             }else{

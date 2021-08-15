@@ -75,11 +75,11 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/address_tv"
                         android:layout_alignStart="@id/address_tv"
-                        android:text="Wed 14-Dec-2021"
-                        android:textSize="12sp"
-                        android:gravity="center"
                         android:layout_marginTop="5dp"
-                        android:textColor="@color/secondary_text"/>
+                        android:gravity="center"
+                        android:text="Wed 14-Dec-2021"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="12sp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -111,6 +111,7 @@
                     android:textAlignment="viewEnd"/>
 
                 <TextView
+                    android:id="@+id/request_date"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -133,6 +134,7 @@
                     android:textAlignment="viewEnd"/>
 
                 <TextView
+                    android:id="@+id/request_time"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class PendingRequests {
+    private String requestId;
     String address, requestedOn, requestDate, requestTime, profilePicUrl;
     boolean isSelected;
 
