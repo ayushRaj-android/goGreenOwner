@@ -5,6 +5,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,12 +37,14 @@ public class PickupAgentActivity extends BaseActivity {
     List<JSONObject> jsonObjectList = new ArrayList<>();
     private AppCompatImageButton addPickupAgentButton;
     private SharedPreference sharedPreference;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pickup_agent);
 
+        context = this;
         pickupAgentRecyclerView = findViewById(R.id.pick_agent_rv);
         pickUpBoySearchView = findViewById(R.id.pickup_search);
         pickupAgentRecyclerView.hasFixedSize();
@@ -94,7 +97,7 @@ public class PickupAgentActivity extends BaseActivity {
             try {
                 jsonArray = new JSONArray(pickupBoyJSONString);
                 pickupBoyRecyclerAdapter = new PickupBoyRecyclerAdapter(
-                        getApplicationContext(),jsonArray);
+                        context,jsonArray);
                 pickupAgentRecyclerView.setAdapter(pickupBoyRecyclerAdapter);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -116,7 +119,7 @@ public class PickupAgentActivity extends BaseActivity {
                             try {
                                 jsonArray = new JSONArray(pickupBoyJSONString);
                                 pickupBoyRecyclerAdapter = new PickupBoyRecyclerAdapter(
-                                        getApplicationContext(),jsonArray);
+                                        context,jsonArray);
                                 pickupAgentRecyclerView.setAdapter(pickupBoyRecyclerAdapter);
                                 sharedPreference.insertMyPickupBoy(pickupBoyJSONString);
                             } catch (JSONException e) {

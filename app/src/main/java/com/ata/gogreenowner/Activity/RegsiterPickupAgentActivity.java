@@ -232,6 +232,7 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
                         if(statusCode == 1){
                             updateDialog.dismiss();
                             showSuccessDialog();
+                            sharedPreference.removeMyPickupBoy();
                             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
@@ -425,7 +426,7 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
             file.createNewFile();
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 0 /*ignored for PNG*/, bos);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 60 /*ignored for PNG*/, bos);
             byte[] bitmapdata = bos.toByteArray();
 
             FileOutputStream fos = new FileOutputStream(file);

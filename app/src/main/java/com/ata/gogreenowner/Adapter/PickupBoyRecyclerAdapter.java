@@ -61,12 +61,12 @@ public class PickupBoyRecyclerAdapter extends RecyclerView.Adapter<PickupBoyRecy
             JSONObject jsonObject = changingList.getJSONObject(position);
             Log.d("Ayush",position+" "+jsonObject.toString());
             holder.agentName.setText(jsonObject.get("name").toString());
-            holder.agentPhone.setText(jsonObject.get("phone").toString());
-            String url = jsonObject.get("profilePicUrl").toString();
+            holder.agentPhone.setText(jsonObject.get("phone").toString().substring(2));
+            String url = jsonObject.get("profilePic").toString();
             holder.setProfilePic(url);
             holder.agentCall.setOnClickListener( v->{
                 try {
-                    makeCall(jsonObject.get("phone").toString());
+                    makeCall(jsonObject.get("phone").toString().substring(2));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

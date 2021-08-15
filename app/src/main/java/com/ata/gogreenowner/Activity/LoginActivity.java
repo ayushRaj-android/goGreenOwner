@@ -20,8 +20,6 @@ import com.ata.gogreenowner.R;
 import com.bumptech.glide.Glide;
 import com.ata.gogreenowner.Utility.SharedPreference;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
 
