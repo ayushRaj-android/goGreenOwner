@@ -41,7 +41,7 @@ public interface ApiInterface {
                                                 @Body JunkYardOwnerDeviceFCM junkYardOwnerDeviceFCM);
 
 
-    @GET("/auth/junkYardOwner/getRequestList")
+    @GET("/junkYardOwner/getRequestList")
     Call<HashMap<Object,Object>> getRequestList(
             @Header("Authorization") String authHeader
     );

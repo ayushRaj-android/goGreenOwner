@@ -61,6 +61,8 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
         StepView step_view;
         LinearLayout weightValueTab;
         AppCompatImageView lineAboveWeight;
+        TextView weightText;
+        TextView valueText;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -69,7 +71,8 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
             step_view=itemView.findViewById(R.id.step_view);
             weightValueTab=itemView.findViewById(R.id.weightValueTab);
             lineAboveWeight=itemView.findViewById(R.id.lineAboveWeight);
-
+            weightText = itemView.findViewById(R.id.weightText);
+            valueText = itemView.findViewById(R.id.valueText);
         }
 
         public void bindViewHolder(JSONObject jsonObject){
@@ -94,10 +97,35 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
                 }
                 else if(status==3){
                     step_view.selectedStep(3);
+                    weightValueTab.setVisibility(View.VISIBLE);
+                    lineAboveWeight.setVisibility(View.VISIBLE);
+                    if(jsonObject.get("amount") != null){
+                        valueText.setText("Value :- \u20B9 "+jsonObject.get("amount").toString());
+                    }else{
+                        valueText.setText("Value :- N/A");
+                    }
 
+                    if(jsonObject.has("weight") && jsonObject.get("weight") != null){
+                        weightText.setText("Weight :- "+jsonObject.get("weight").toString());
+                    }else{
+                        weightText.setText("Weight :- N/A");
+                    }
                 }
                 else if(status==5){
                     step_view.selectedStep(4);
+                    weightValueTab.setVisibility(View.VISIBLE);
+                    lineAboveWeight.setVisibility(View.VISIBLE);
+                    if(jsonObject.get("amount") != null){
+                        valueText.setText("Value :- \u20B9 "+jsonObject.get("amount").toString());
+                    }else{
+                        valueText.setText("Value :- N/A");
+                    }
+
+                    if(jsonObject.has("weight") && jsonObject.get("weight") != null){
+                        weightText.setText("Weight :- "+jsonObject.get("weight").toString());
+                    }else{
+                        weightText.setText("Weight :- N/A");
+                    }
                 }
                 else{
                     step_view.cancel(true);

@@ -93,9 +93,12 @@ public class PickupAgentActivity extends BaseActivity {
         });
 
         addPickupAgentButton.setOnClickListener( v->{
-            snackbar.dismiss();
+            if(snackbar != null && snackbar.isShown()) {
+                snackbar.dismiss();
+            }
             Intent intent = new Intent(this,RegsiterPickupAgentActivity.class);
             startActivity(intent);
+            finish();
         });
 
         populatePickupAgent();

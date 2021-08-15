@@ -2,12 +2,16 @@ package com.ata.gogreenowner.Activity;
 
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.SearchView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -25,6 +30,8 @@ import com.ata.gogreenowner.Adapter.ApiClient;
 import com.ata.gogreenowner.Adapter.ApiInterface;
 import com.ata.gogreenowner.R;
 import com.ata.gogreenowner.Utility.SharedPreference;
+import com.bumptech.glide.Glide;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,6 +50,7 @@ import retrofit2.Response;
 
 public class RequestsActivity extends BaseActivity {
 
+    private ConstraintLayout requestMainLayout;
     private RadioGroup reqTypeRadioGrp;
     private AppCompatSpinner searchTypeSpinner;
     private SearchView requestSearchView;
@@ -51,7 +59,6 @@ public class RequestsActivity extends BaseActivity {
     private RecyclerView requestsRecyclerView;
     private AllRequestRecyclerAdapter allRequestRecyclerAdapter;
     private Dialog updateDialog;
-    TextView errorTV;
     JSONArray customerArray;
     SharedPreference sharedPreference;
     String radioGrpText="All";
@@ -61,20 +68,22 @@ public class RequestsActivity extends BaseActivity {
     private JSONArray upcomingRequestList;
     private JSONArray completedRequestList;
     private JSONArray searchRequestList;
+    private Snackbar snackbar;
+    private Context context;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        errorTV = findViewById(R.id.errorTV);
         updateDialog = new Dialog(this);
-
+        requestMainLayout = findViewById(R.id.request_main_layout);
         sharedPreference=new SharedPreference(this);
         allRequestList=new JSONArray();
         todayRequestList=new JSONArray();
         upcomingRequestList=new JSONArray();
         completedRequestList=new JSONArray();
         searchRequestList=new JSONArray();
+        context = this;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_requests);
@@ -93,7 +102,6 @@ public class RequestsActivity extends BaseActivity {
                 RadioButton rb = (RadioButton) group.findViewById(checkedId);
                 if (null != rb && checkedId > -1) {
                     radioGrpText=rb.getText().toString();
-                    Toast.makeText(RequestsActivity.this, rb.getText(), Toast.LENGTH_SHORT).show();
                     if(rb.getText().toString().equalsIgnoreCase("Today")){
                         allRequestRecyclerAdapter.requestListToShow=todayRequestList;
                         allRequestRecyclerAdapter.notifyDataSetChanged();
@@ -124,7 +132,7 @@ public class RequestsActivity extends BaseActivity {
                     requestSearchView.setQuery("", false);
                     //pickupBoyRecyclerAdapter.filter(null);
                 }
-                hideKeyboard();
+                //hideKeyboard();
                 String selectedItemText = (String) parent.getItemAtPosition(position);
                 selectedSearchType = selectedItemText;
             }
@@ -138,7 +146,6 @@ public class RequestsActivity extends BaseActivity {
         requestSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.d("Ayush",radioGrpText);
                 if(radioGrpText.equalsIgnoreCase("all")){
                     getSearchRequest(query,allRequestList);
                 }
@@ -172,9 +179,36 @@ public class RequestsActivity extends BaseActivity {
         searchTypeSpinner.setSelection(0);
         getRequestList();
 
+        ImageView clearButton = requestSearchView.findViewById(androidx.appcompat.R.id.search_close_btn);
+        clearButton.setOnClickListener(v -> {
+            if(requestSearchView.getQuery().length() == 0) {
+                requestSearchView.setQuery("", false);
+                requestSearchView.setIconified(true);
+            } else {
+                requestSearchView.setQuery("", false);
+                if(radioGrpText.equalsIgnoreCase("all")){
+                    allRequestRecyclerAdapter.requestListToShow=allRequestList;
+                    allRequestRecyclerAdapter.notifyDataSetChanged();
+                }
+                else if(radioGrpText.equalsIgnoreCase("Today")){
+                    allRequestRecyclerAdapter.requestListToShow=todayRequestList;
+                    allRequestRecyclerAdapter.notifyDataSetChanged();
+                }
+                else if(radioGrpText.equalsIgnoreCase("Upcoming")){
+                    allRequestRecyclerAdapter.requestListToShow=upcomingRequestList;
+                    allRequestRecyclerAdapter.notifyDataSetChanged();
+                }
+                else{
+                    allRequestRecyclerAdapter.requestListToShow=completedRequestList;
+                    allRequestRecyclerAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+
     }
 
     private void getRequestList(){
+        showDialog("Getting your requests");
         ApiClient apiClient = new ApiClient(getApplicationContext());
         ApiInterface apiService = apiClient.getClient().create(ApiInterface.class);
 
@@ -184,21 +218,12 @@ public class RequestsActivity extends BaseActivity {
             @Override
             public void onResponse(Call<HashMap<Object, Object>> call,
                                    Response<HashMap<Object, Object>> response) {
-                Log.d("Ayush",response.toString());
                 if(response.isSuccessful() && response.body()!=null){
                     HashMap<Object, Object> resultMap = response.body();
                     int statusCode = (int) (double) resultMap.get("statusCode");
-                    Log.d("Ayush", String.valueOf(statusCode));
                     if (statusCode == -1) {
                         updateDialog.dismiss();
-                        errorTV.setVisibility(View.VISIBLE);
-                        errorTV.setText("Owner Invalid");
-                        errorTV.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                errorTV.setVisibility(View.GONE);
-                            }
-                        }, 5000);
+                        showSnackbarAPI();
                     }
                     else if(statusCode==2){
                         try {
@@ -210,6 +235,7 @@ public class RequestsActivity extends BaseActivity {
                             getCompletedRequests();
                             allRequestRecyclerAdapter = new AllRequestRecyclerAdapter(getApplicationContext(),allRequestList);
                             requestsRecyclerView.setAdapter(allRequestRecyclerAdapter);
+                            updateDialog.dismiss();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -217,30 +243,18 @@ public class RequestsActivity extends BaseActivity {
                     }
                     else{
                         updateDialog.dismiss();
-                        errorTV.setVisibility(View.VISIBLE);
-                        errorTV.setText("Internal Server Exception");
-                        errorTV.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                errorTV.setVisibility(View.GONE);
-                            }
-                        }, 5000);
+                        showSnackbarAPI();
                     }
                 }
                 else {
                     updateDialog.dismiss();
-                    errorTV.setVisibility(View.VISIBLE);
-                    errorTV.setText("Internal Server Exception");
-                    errorTV.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            errorTV.setVisibility(View.GONE);
-                        }
-                    }, 5000);
+                    showSnackbarAPI();
                 }
             }
             @Override
             public void onFailure(Call<HashMap<Object, Object>> call, Throwable t) {
+                updateDialog.dismiss();
+                showSnackbarAPI();
             }
         });
     }
@@ -302,22 +316,35 @@ public class RequestsActivity extends BaseActivity {
             try {
                 for (int i = 0; i < toSearchList.length(); i++) {
                     JSONObject jsonObject = toSearchList.getJSONObject(i);
-                    if(selectedSearchType.equalsIgnoreCase("pickUp Agent")){
-                        JSONObject pickUpAgent=new JSONObject(jsonObject.get("pickUpAgent").toString());
-                        if(pickUpAgent.get("name").toString().equalsIgnoreCase(searchText)){
-                            searchRequestList.put(jsonObject);
+                    Log.d("Ayush",jsonObject.toString());
+                    if(selectedSearchType.equalsIgnoreCase("PickUp Agent")){
+                        try {
+                            JSONObject pickUpAgent = new JSONObject(jsonObject.get("pickUpAgent").toString());
+                            if (pickUpAgent.get("name").toString().equalsIgnoreCase(searchText)) {
+                                searchRequestList.put(jsonObject);
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
                         }
                     }
-                  else if(selectedSearchType.equalsIgnoreCase("pincode")){
-                        JSONObject reqAddress=new JSONObject(jsonObject.get("req_address").toString());
-                        if(reqAddress.get("pincode").toString().equalsIgnoreCase(searchText)){
-                            searchRequestList.put(jsonObject);
-                        }
+                  else if(selectedSearchType.equalsIgnoreCase("Pincode")){
+                      try {
+                          JSONObject reqAddress = new JSONObject(jsonObject.get("req_address").toString());
+                          if (reqAddress.get("pincode").toString().equalsIgnoreCase(searchText)) {
+                              searchRequestList.put(jsonObject);
+                          }
+                      }catch (Exception e){
+                          e.printStackTrace();
+                      }
                     }
                   else {
                         JSONObject reqAddress=new JSONObject(jsonObject.get("req_address").toString());
-                        if(reqAddress.get("street").toString().equalsIgnoreCase(searchText)){
-                            searchRequestList.put(jsonObject);
+                        try{
+                            if(reqAddress.get("street").toString().equalsIgnoreCase(searchText)){
+                                searchRequestList.put(jsonObject);
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -349,13 +376,37 @@ public class RequestsActivity extends BaseActivity {
         searchTypeSpinner.setAdapter(searchTypeSpinnerArrayAdapter);
     }
 
-    public void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-    }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    private void showDialog(String text) {
+        ImageView dialog_image;
+        TextView dialog_text;
+        updateDialog.setContentView(R.layout.loading_popup);
+        updateDialog.setCanceledOnTouchOutside(false);
+        updateDialog.setCancelable(false);
+        dialog_image = updateDialog.findViewById(R.id.loading_image);
+        dialog_text = updateDialog.findViewById(R.id.loading_text);
+        Glide.with(this).load(R.drawable.ic_dash_req_card).into(dialog_image);
+        dialog_text.setText(text);
+        updateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        updateDialog.show();
+    }
+
+    private void showSnackbarAPI(){
+        snackbar = Snackbar.make(requestMainLayout,"Something went wrong!",
+                Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction("RETRY", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                snackbar.dismiss();
+                getRequestList();
+            }
+        });
+        snackbar.show();
+        snackbar.setActionTextColor(Color.RED);
+
     }
 }

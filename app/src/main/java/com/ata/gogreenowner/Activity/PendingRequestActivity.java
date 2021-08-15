@@ -168,6 +168,7 @@ public class PendingRequestActivity extends BaseActivity implements PendingReque
     }
 
     private void getPickupAgentList(){
+        showDialog("Getting Pickup Agents");
         String pickupBoyJSONString = sharedPreference.getMyPickupBoy();
         if(pickupBoyJSONString != null){
             try {
