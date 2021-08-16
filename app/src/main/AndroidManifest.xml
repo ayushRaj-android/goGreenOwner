@@ -18,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GoGreenOwner">
         <activity
+            android:name=".Activity.RequestDetailsActivity"
+            android:exported="true" />
+        <activity
             android:name=".Activity.RegsiterPickupAgentActivity"
             android:exported="true">
             <intent-filter>
@@ -59,6 +62,10 @@
         <activity
             android:name=".Activity.BaseActivity"
             android:exported="true" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDdsZK7tGnQ5iTOVdcFt8P7ZjBjeEw8pvs" />
     </application>
 
 </manifest>

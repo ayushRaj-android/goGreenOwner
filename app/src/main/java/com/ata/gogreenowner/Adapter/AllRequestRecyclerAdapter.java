@@ -1,6 +1,8 @@
 package com.ata.gogreenowner.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ata.gogreenowner.Activity.RequestDetailsActivity;
 import com.ata.gogreenowner.R;
 import com.ata.gogreenowner.View.StepView;
 
@@ -19,6 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.sql.Timestamp;
@@ -28,6 +32,7 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
 
     Context context;
     public JSONArray requestListToShow;
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E, dd-MMM-yyyy");
 
     public AllRequestRecyclerAdapter(Context context, JSONArray requestList) {
         this.context = context;
@@ -63,9 +68,11 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
         AppCompatImageView lineAboveWeight;
         TextView weightText;
         TextView valueText;
+        View mView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            mView = itemView;
             address_tv=itemView.findViewById(R.id.address_tv);
             order_placement_time=itemView.findViewById(R.id.order_placement_time);
             step_view=itemView.findViewById(R.id.step_view);
@@ -84,6 +91,10 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
                 String timeStamp = new SimpleDateFormat("EE, dd-MMM-yyyy").format(date);
                 order_placement_time.setText(timeStamp);
                 int status=jsonObject.getInt("status");
+                mView.setOnClickListener( v->{
+                    Log.d("Ayush",jsonObject.toString());
+                    startRequestDetailsActivity(jsonObject);
+                });
 
                 if(status==0){
                     step_view.selectedStep(1);
@@ -135,6 +146,89 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+
+        public void startRequestDetailsActivity(JSONObject jsonObject){
+            Log.d("Ayush",jsonObject.toString());
+            try {
+                int status = Integer.parseInt(jsonObject.get("status").toString());
+                Intent intent = new Intent(context, RequestDetailsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("status", status);
+                JSONObject addressObject = jsonObject.getJSONObject("req_address");
+                intent.putExtra("pickupLocation",addressObject.get("street").toString());
+                Timestamp requestPlacementTimestamp = getTimestampFromString(
+                        jsonObject.get("requestPlacementTimestamp").toString());
+                Date requestPlacementDate = new Date(requestPlacementTimestamp.getTime());
+                intent.putExtra("reqPlacementDate",
+                        simpleDateFormat.format(requestPlacementDate));
+                Timestamp pickupTimestamp =getTimestampFromString(jsonObject.get("requestDate")
+                        .toString());
+                Date pickupDate = new Date(pickupTimestamp.getTime());
+                String pickupTime = simpleDateFormat.format(pickupDate)+", "+
+                        jsonObject.get("timeSlot").toString();
+                intent.putExtra("pickupTime",pickupTime);
+                intent.putExtra("latitude",addressObject.get("latitude").toString());
+                intent.putExtra("longitude",addressObject.get("longitude").toString());
+                intent.putExtra("locality",addressObject.get("locality").toString());
+                intent.putExtra("requestId",jsonObject.get("requestId").toString());
+                if(status > 0) {
+                    try {
+                        JSONObject pickupBoyObj = jsonObject.getJSONObject("boyAssigned");
+                        try {
+                            intent.putExtra("pickupBoyName", pickupBoyObj.getString("name"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        try {
+                            intent.putExtra("pickupBoyPhone", pickupBoyObj.getString("phoneNumber"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        try {
+                            intent.putExtra("pickupBoyPicUrl", pickupBoyObj.getString("profilePicUrl"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+
+                if(status >= 3){
+                    try {
+                        intent.putExtra("amount", jsonObject.getString("amount"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        intent.putExtra("weight", jsonObject.getString("weight"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                context.startActivity(intent);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        public Timestamp getTimestampFromString(String timestampString){
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+            if(timestampString != null){
+                Date date = null;
+                try {
+                    date = sdf.parse(timestampString);
+                    Timestamp timestamp = new Timestamp(date.getTime());
+                    return timestamp;
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
         }
 
     }

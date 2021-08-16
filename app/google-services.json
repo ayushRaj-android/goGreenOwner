@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "367982179750",
+    "project_id": "gogreendemo-cbe76",
+    "storage_bucket": "gogreendemo-cbe76.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367982179750:android:f21fda6fa2ec8c5b1d0b67",
+        "android_client_info": {
+          "package_name": "com.ata.gogreenowner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "367982179750-pe8fif71s2oj3rmqcjcl1eladlh5kc3i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsAeGjF0KyXoemyt1UdRYyoxeV9nCL0Rs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "367982179750-pe8fif71s2oj3rmqcjcl1eladlh5kc3i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367982179750:android:2c9f1afc0ebb4b2f1d0b67",
+        "android_client_info": {
+          "package_name": "com.ata.gogreenuser"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "367982179750-pe8fif71s2oj3rmqcjcl1eladlh5kc3i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsAeGjF0KyXoemyt1UdRYyoxeV9nCL0Rs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "367982179750-pe8fif71s2oj3rmqcjcl1eladlh5kc3i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

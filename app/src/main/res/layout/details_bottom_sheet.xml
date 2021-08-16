@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="10dp"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="300dp"
+    android:id="@+id/request_bottom_sheet"
+    android:background="@color/divider_color"
+    app:layout_behavior="@string/bottom_sheet_behavior">
+
+    <ImageView
+        android:id="@+id/greenbox_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_greenbox"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/divider"/>
+
+    <LinearLayout
+        android:id="@+id/pickup_boy_details_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:weightSum="2">
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.1">
+            <ImageView
+                android:id="@+id/pickup_boy_pic_view"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/product_logo"/>
+            <TextView
+                android:id="@+id/pickup_boy_name_view"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_toRightOf="@id/pickup_boy_pic_view"
+
+                android:layout_alignParentTop="true"
+                android:text="Raju"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/purple_700"/>
+            <RatingBar
+                android:id="@+id/pickup_boy_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleX="1"
+                android:scaleY="1"
+                style="@android:style/Widget.DeviceDefault.RatingBar.Small"
+                android:layout_toEndOf="@id/pickup_boy_pic_view"
+                android:layout_below="@id/pickup_boy_name_view"
+                android:numStars="5"
+                android:theme="@style/RatingBar"/>
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/pickup_boy_call_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/pickup_boy_rating"
+                android:layout_marginLeft="4dp"
+                android:layout_alignTop="@id/pickup_boy_rating"
+                android:background="@null"
+                app:srcCompat="@drawable/ic_baseline_call_24"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".9">
+            <ImageView
+                android:id="@+id/clock_svg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_clock"/>
+            <TextView
+                android:id="@+id/estimated_timing_text"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_toEndOf="@id/clock_svg"
+                android:text="6:00-8:00 PM"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center_vertical"
+                android:textColor="@color/purple_700"
+                android:layout_marginStart="5dp"/>
+
+            <TextView
+                android:id="@+id/estimated_timing_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/clock_svg"
+                android:layout_alignParentStart="true"
+                android:text="Estimated time of arrival"
+                android:textSize="14sp"
+                android:textColor="@color/secondary_text" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Details"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"
+        android:textSize="22sp"
+        android:textColor="@color/purple_700"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Status"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="@color/purple_700"/>
+
+    <TextView
+        android:id="@+id/status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Allocated"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="@color/colorAccent"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Pickup Location"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="@color/purple_700"/>
+
+    <TextView
+        android:id="@+id/pickup_location_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="DLF Phase-2, Gurgaon"
+        android:textSize="16sp"
+        android:textColor="@color/purple_700"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Request Placement Date"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="@color/purple_700"/>
+
+    <TextView
+        android:id="@+id/request_placement_date_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="12-July-2021"
+        android:textSize="16sp"
+        android:textColor="@color/purple_700"/>
+
+    <TextView
+        android:id="@+id/pickup_time_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Pickup Time"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="@color/purple_700"/>
+
+    <TextView
+        android:id="@+id/pickup_date_time_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Tuesday, 19th July 2021, 6:00-8:00 PM"
+        android:textSize="16sp"
+        android:textColor="@color/purple_700"/>
+
+    <TextView
+        android:id="@+id/service_completion_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Service Completion Time"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="@color/purple_700"/>
+
+    <TextView
+        android:id="@+id/service_completion_date_time_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Tuesday, 19th July 2021, 6:00-8:00 PM"
+        android:textSize="16sp"
+        android:textColor="@color/purple_700"/>
+
+    <TextView
+        android:id="@+id/payment_summary_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Payment Summary"
+        android:textStyle="bold"
+        android:textSize="22sp"
+        android:textColor="@color/purple_700"/>
+
+    <RelativeLayout
+        android:id="@+id/payment_summary_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:text="Amount Given"
+            android:textColor="@color/purple_700"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/amount_recieved_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rs. 10000"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="20dp"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="@color/purple_700"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/weight_summary_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:text="Weight of Garbage"
+            android:textColor="@color/purple_700"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/weight_recieved_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="20 kg"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="20dp"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="@color/purple_700"/>
+    </RelativeLayout>
+
+</LinearLayout>
