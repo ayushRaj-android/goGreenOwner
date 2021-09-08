@@ -19,28 +19,30 @@
         <entry key="app/src/main/res/drawable/ic_baseline_check_circle_outline_24.xml" value="0.18072916666666666" />
         <entry key="app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.25277777777777777" />
         <entry key="app/src/main/res/drawable/ic_baseline_directions_bike_24.xml" value="0.25277777777777777" />
-        <entry key="app/src/main/res/drawable/ic_clock.xml" value="0.18072916666666666" />
+        <entry key="app/src/main/res/drawable/ic_baseline_smartphone_24.xml" value="0.11927083333333334" />
         <entry key="app/src/main/res/drawable/ic_dash_card_bg.xml" value="0.2351851851851852" />
-        <entry key="app/src/main/res/drawable/ic_greenbox.xml" value="0.18072916666666666" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.18385416666666668" />
         <entry key="app/src/main/res/drawable/ic_neon_marker.xml" value="0.3111111111111111" />
         <entry key="app/src/main/res/drawable/launch_screen.xml" value="0.2351851851851852" />
         <entry key="app/src/main/res/drawable/password_invisible_eye.xml" value="0.2351851851851852" />
         <entry key="app/src/main/res/drawable/search_background.xml" value="0.2351851851851852" />
         <entry key="app/src/main/res/drawable/white_border_edit.xml" value="0.24444444444444444" />
+        <entry key="app/src/main/res/font/cantata_one.xml" value="0.13333333333333333" />
         <entry key="app/src/main/res/layout-w600dp/spinner_item.xml" value="0.1875" />
         <entry key="app/src/main/res/layout/activity_base.xml" value="0.29583333333333334" />
         <entry key="app/src/main/res/layout/activity_dashboard.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_forgot_password.xml" value="0.103125" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.29583333333333334" />
         <entry key="app/src/main/res/layout/activity_pending_request.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_pickup_agent.xml" value="0.28703703703703703" />
+        <entry key="app/src/main/res/layout/activity_pickup_agent_detail.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_regsiter_pickup_agent.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/activity_request_details.xml" value="0.16458333333333333" />
+        <entry key="app/src/main/res/layout/activity_request_details.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_requests.xml" value="0.30512820512820515" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.29583333333333334" />
         <entry key="app/src/main/res/layout/all_request_card.xml" value="0.2953125" />
         <entry key="app/src/main/res/layout/dashboard_card.xml" value="0.28703703703703703" />
-        <entry key="app/src/main/res/layout/details_bottom_sheet.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/details_bottom_sheet.xml" value="0.25" />
         <entry key="app/src/main/res/layout/loading_popup.xml" value="0.3098958333333333" />
         <entry key="app/src/main/res/layout/nav_header_dashboard.xml" value="0.16770833333333332" />
         <entry key="app/src/main/res/layout/pending_request_card.xml" value="0.25" />

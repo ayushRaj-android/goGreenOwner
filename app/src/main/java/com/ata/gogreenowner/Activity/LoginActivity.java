@@ -165,6 +165,12 @@ public class LoginActivity extends BaseActivity {
                 }, 3000);
             }
         });
+
+        forgotPasswordTV.setOnClickListener( v-> {
+            Intent intent = new Intent(this, ForgotPasswordActivity.class);
+            startActivity(intent);
+            finish();
+        });
     }
 
 

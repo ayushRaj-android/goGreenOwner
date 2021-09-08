@@ -25,6 +25,24 @@ public interface ApiInterface {
             @Body LoginObject loginObject
     );
 
+    @POST("/auth/junkYardOwner/verify-resetPassword")
+    Call<HashMap<Object,Object>> otpVerify(
+            @Query("otp")String otp,
+            @Query("phoneNumber")String phoneNumber,
+            @Query("purpose") String purpose
+    );
+
+    @POST("/auth/junkYardOwner/forgot-password")
+    Call<HashMap<Object,Object>> forgotPassword(
+            @Query("phoneNumber")String phoneNumber
+    );
+
+    @POST("/auth/junkYardOwner/resend-otp")
+    Call<HashMap<Object,Object>> resendOtp(
+            @Query("phoneNumber")String phoneNumber,
+            @Query("purpose")String purpose
+    );
+
     @GET("/junkYardOwner/getAddress")
     Call<HashMap<Object,Object>> getMySavedAddress(
             @Header("Authorization") String authHeader

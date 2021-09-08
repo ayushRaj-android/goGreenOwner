@@ -22,6 +22,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ata.gogreenowner.Activity.PickupAgentDetailActivity;
 import com.ata.gogreenowner.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -70,6 +71,12 @@ public class PickupBoyRecyclerAdapter extends RecyclerView.Adapter<PickupBoyRecy
                     e.printStackTrace();
                 }
             });
+            holder.holderView.setOnClickListener(v->{
+                Intent intent=new Intent(context, PickupAgentDetailActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("pickupJson", jsonObject.toString());
+                context.startActivity(intent);
+            });
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -85,13 +92,14 @@ public class PickupBoyRecyclerAdapter extends RecyclerView.Adapter<PickupBoyRecy
         private TextView agentName;
         private TextView agentPhone;
         private AppCompatImageButton agentCall;
+        private View holderView;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             profilePic = itemView.findViewById(R.id.pick_agent_card_profile_pic);
             agentName = itemView.findViewById(R.id.pick_agent_card_name);
             agentPhone = itemView.findViewById(R.id.pick_agent_card_phone);
             agentCall = itemView.findViewById(R.id.pick_agent_card_call);
-
+            holderView=itemView;
         }
 
         private void setProfilePic(String url){
