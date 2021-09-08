@@ -5,6 +5,7 @@ import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.ata.gogreenowner.R;
 
@@ -13,6 +14,7 @@ public class DashboardActivity extends BaseActivity {
     CardView pickupAgentCard;
     CardView pendingRequestCard;
     CardView requestCardView;
+    CardView analyticsCardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,12 @@ public class DashboardActivity extends BaseActivity {
         requestCardView.setOnClickListener( v->{
             Intent intent = new Intent(this,RequestsActivity.class);
             startActivity(intent);
+        });
+
+        analyticsCardView = findViewById(R.id.analytics_card);
+        analyticsCardView.setOnClickListener( v->{
+            Toast.makeText(this, "Will be available in next version!",Toast.LENGTH_LONG)
+                    .show();
         });
     }
 }
