@@ -7,6 +7,7 @@ public class PendingRequests {
     private String requestId;
     String address, requestedOn, requestDate, requestTime, profilePicUrl;
     boolean isSelected;
+    private String locality;
 
     public PendingRequests(String address, boolean isSelected) {
         this.address = address;
