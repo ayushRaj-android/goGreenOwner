@@ -148,11 +148,16 @@ public class MyFirebaseInstanceIdService extends FirebaseMessagingService {
             notification = new Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
                     .setContentTitle(title)
                     .setContentText(body)
-                    .setSmallIcon(R.mipmap.ic_launcher_round)
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true)
                     .setSound(notificationSoundURI, audioAttributes)
                     .setVisibility(Notification.VISIBILITY_PUBLIC);
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                notification.setSmallIcon(R.drawable.ic_notification);
+                notification.setColor(getResources().getColor(R.color.colorAccent));
+            } else {
+                notification.setSmallIcon(R.drawable.ic_notification);
+            }
             notificationManager.notify(id, notification.build());
         } else {
             NotificationCompat.Builder builder = null;
@@ -162,9 +167,14 @@ public class MyFirebaseInstanceIdService extends FirebaseMessagingService {
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true)
                     .setColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
-                    .setSmallIcon(R.mipmap.ic_launcher_round)
                     .setPriority(Notification.PRIORITY_MAX)
                     .setSound(notificationSoundURI);
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder.setSmallIcon(R.drawable.ic_notification);
+                builder.setColor(getResources().getColor(R.color.colorAccent));
+            } else {
+                builder.setSmallIcon(R.drawable.ic_notification);
+            }
             notificationManager.notify(id, builder.build());
         }
     }
