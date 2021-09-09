@@ -95,13 +95,13 @@ public class MyFirebaseInstanceIdService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(@NonNull @NotNull RemoteMessage remoteMessage) {
         String messageTitle = null;
-        if(remoteMessage.getNotification().getTitle() != null){
+        if(remoteMessage.getNotification() != null && remoteMessage.getNotification().getTitle() != null){
             messageTitle = remoteMessage.getNotification().getTitle();
         }else{
             messageTitle = remoteMessage.getData().get("title");
         }
         String messageBody = null;
-        if(remoteMessage.getNotification().getBody() != null){
+        if(remoteMessage.getNotification() != null && remoteMessage.getNotification().getBody() != null){
             messageBody = remoteMessage.getNotification().getBody();
         }else{
             messageBody = remoteMessage.getData().get("body");
@@ -123,7 +123,7 @@ public class MyFirebaseInstanceIdService extends FirebaseMessagingService {
         if(flag == 0){
             intent = new Intent(this, SplashActivity.class);
         }else{
-            new Intent(this, RequestsActivity.class);
+            intent = new Intent(this, RequestsActivity.class);
         }
         PendingIntent pendingIntent;
         if (isAppInForeground()) {
