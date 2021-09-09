@@ -47,7 +47,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
-            android:text="Pick-up Agents"
+            android:text="@string/pick_up_agents"
             android:textColor="@color/colorAccent"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -85,7 +85,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="You don't have any Pickup Agent"
+                android:text="@string/you_don_t_have_any_pickup_agent"
                 android:textSize="20sp"
                 android:textColor="@color/svCancelColor"
                 android:textStyle="bold"/>

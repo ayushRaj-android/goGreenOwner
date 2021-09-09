@@ -29,7 +29,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pending Requests"
+            android:text="@string/pending_requests"
             android:padding="10dp"
             android:textColor="@color/colorAccent"
             android:textSize="20sp"
@@ -84,7 +84,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="You don't have any Pending Request"
+                    android:text="@string/you_don_t_have_any_pending_request"
                     android:textSize="20sp"
                     android:textColor="@color/svCancelColor"
                     android:textStyle="bold"/>
@@ -97,7 +97,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
-        android:text="Assign Pickup Agent"
+        android:text="@string/assign_pickup_agent"
         android:textAllCaps="false"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"

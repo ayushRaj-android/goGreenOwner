@@ -1,14 +1,7 @@
 package com.ata.gogreenowner.Activity;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.app.Dialog;
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -25,13 +18,16 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.ata.gogreenowner.Adapter.ApiClient;
 import com.ata.gogreenowner.Adapter.ApiInterface;
@@ -48,7 +44,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,6 +57,12 @@ import retrofit2.Response;
 
 public class RegsiterPickupAgentActivity extends BaseActivity implements TextWatcher {
 
+    private static final int REQUEST_CAMERA = 118;
+    private static final int REQUEST_EXTERNAL_STORAGE = 115;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
     private ScrollView registerFormLayout;
     private TextInputLayout agentNameLayout;
     private TextInputEditText agentNameText;
@@ -76,7 +77,6 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
     private ImageView uploadPhotoResImage;
     private ImageView uploadAadharResImage;
     private AppCompatButton registerAgentSubmitBtn;
-
     private LinearLayout otpLayout;
     private EditText editText_one;
     private EditText editText_two;
@@ -86,13 +86,6 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
     private EditText editText_six;
     private AppCompatButton resendOtpButton;
     private TextView timer;
-
-    private static final int REQUEST_CAMERA = 118;
-    private static final int REQUEST_EXTERNAL_STORAGE = 115;
-    private static String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-    };
     private Uri photoUri;
     private Bitmap currentImage;
     private Uri idUri;
@@ -147,15 +140,15 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
         otpLayout.setVisibility(View.GONE);
 
 
-        uploadPhotoText.setOnClickListener( v->{
+        uploadPhotoText.setOnClickListener(v -> {
             selectImage("photo");
         });
 
-        uploadAadharText.setOnClickListener(v->{
+        uploadAadharText.setOnClickListener(v -> {
             selectImage("id");
         });
 
-        registerAgentSubmitBtn.setOnClickListener( v->{
+        registerAgentSubmitBtn.setOnClickListener(v -> {
             registerTheAgent();
         });
     }
@@ -220,16 +213,15 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
             ApiClient apiClient = new ApiClient(getApplicationContext());
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
             String jwtToken = "Bearer " + sharedPreference.getJwtToken();
-            Call<HashMap<Object,Object>> call = apiService.verifyPickupBoy(jwtToken,
-                    otpValue,phoneNumber);
+            Call<HashMap<Object, Object>> call = apiService.verifyPickupBoy(jwtToken,
+                    otpValue, phoneNumber);
             call.enqueue(new Callback<HashMap<Object, Object>>() {
                 @Override
                 public void onResponse(Call<HashMap<Object, Object>> call, Response<HashMap<Object, Object>> response) {
-                    Log.d("Ayush",response.toString());
                     if (response.isSuccessful() && response.body() != null) {
-                        HashMap<Object,Object> resultMap = response.body();
-                        int statusCode = (int)(double)resultMap.get("statusCode");
-                        if(statusCode == 1){
+                        HashMap<Object, Object> resultMap = response.body();
+                        int statusCode = (int) (double) resultMap.get("statusCode");
+                        if (statusCode == 1) {
                             updateDialog.dismiss();
                             showSuccessDialog();
                             sharedPreference.removeMyPickupBoy();
@@ -237,12 +229,12 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
                                 @Override
                                 public void run() {
                                     //Do something here
-                                    Intent intent = new Intent(getApplicationContext(),PickupAgentActivity.class);
+                                    Intent intent = new Intent(getApplicationContext(), PickupAgentActivity.class);
                                     startActivity(intent);
                                     finish();
                                 }
                             }, 5000);
-                        }else if(statusCode == -1 || statusCode == -3){
+                        } else if (statusCode == -1 || statusCode == -3) {
                             updateDialog.dismiss();
                             otpLayout.setVisibility(View.VISIBLE);
                             errorTV.setVisibility(View.VISIBLE);
@@ -253,7 +245,7 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
                                     errorTV.setVisibility(View.INVISIBLE);
                                 }
                             }, 3000);
-                        }else{
+                        } else {
                             updateDialog.dismiss();
                             otpLayout.setVisibility(View.VISIBLE);
                             errorTV.setVisibility(View.VISIBLE);
@@ -265,7 +257,7 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
                                 }
                             }, 3000);
                         }
-                    }else{
+                    } else {
                         updateDialog.dismiss();
                         otpLayout.setVisibility(View.VISIBLE);
                         errorTV.setVisibility(View.VISIBLE);
@@ -290,46 +282,43 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
 
 
     private void selectImage(String type) {
-        final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };
-       builder = new AlertDialog.Builder(RegsiterPickupAgentActivity.this);
+        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+        builder = new AlertDialog.Builder(RegsiterPickupAgentActivity.this);
         builder.setTitle("Add Photo!");
         builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                if (options[item].equals("Take Photo"))
-                {
-                    if(getCameraPermission()) {
+                if (options[item].equals("Take Photo")) {
+                    if (getCameraPermission()) {
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        if(type.equalsIgnoreCase("photo")){
+                        if (type.equalsIgnoreCase("photo")) {
                             startActivityForResult(intent, 1);
-                        }else{
+                        } else {
                             startActivityForResult(intent, 3);
                         }
-                    }else{
+                    } else {
                         askCameraPermission();
                     }
-                }
-                else if (options[item].equals("Choose from Gallery"))
-                {
-                    if(getStoragePermission()) {
+                } else if (options[item].equals("Choose from Gallery")) {
+                    if (getStoragePermission()) {
                         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                         photoPickerIntent.setType("image/*");
-                        if(type.equalsIgnoreCase("photo")) {
+                        if (type.equalsIgnoreCase("photo")) {
                             startActivityForResult(photoPickerIntent, 2);
-                        }else{
+                        } else {
                             startActivityForResult(photoPickerIntent, 4);
                         }
-                    }else{
+                    } else {
                         askStoragePermission();
                     }
-                }
-                else if (options[item].equals("Cancel")) {
+                } else if (options[item].equals("Cancel")) {
                     dialog.dismiss();
                 }
             }
         });
         builder.show();
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -342,7 +331,7 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
                         .optionalCircleCrop().into(uploadPhotoResImage);
                 uploadPhotoResImage.setVisibility(View.VISIBLE);
                 currentImageFile = getFileFromBitmap(currentImage);
-            }else if(requestCode == 2){
+            } else if (requestCode == 2) {
                 photoUri = data.getData();
                 if (photoUri != null) {
                     try {
@@ -358,13 +347,13 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
                         e.printStackTrace();
                     }
                 }
-            }else if(requestCode == 3){
+            } else if (requestCode == 3) {
                 Bundle extras = data.getExtras();
                 currentIdImage = (Bitmap) extras.get("data");
                 uploadAadharResImage.setImageBitmap(currentIdImage);
                 uploadAadharResImage.setVisibility(View.VISIBLE);
                 idImageFile = getFileFromBitmap(currentIdImage);
-            }else if(requestCode == 4){
+            } else if (requestCode == 4) {
                 idUri = data.getData();
                 if (idUri != null) {
                     try {
@@ -382,17 +371,17 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
         }
     }
 
-    private boolean getCameraPermission(){
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED){
+    private boolean getCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
         return false;
     }
 
     private void askCameraPermission() {
-        if(ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                     this,
                     new String[]{Manifest.permission.CAMERA},
@@ -401,17 +390,17 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
         }
     }
 
-    private boolean getStoragePermission(){
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED){
+    private boolean getStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
         return false;
     }
 
     private void askStoragePermission() {
-        if(ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                     this,
                     PERMISSIONS_STORAGE,
@@ -419,8 +408,8 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
             );
         }
     }
-    
-    public File getFileFromBitmap(Bitmap bitmap){
+
+    public File getFileFromBitmap(Bitmap bitmap) {
         try {
             File file = new File(getApplicationContext().getCacheDir(), System.currentTimeMillis() + ".png");
             file.createNewFile();
@@ -434,7 +423,7 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
             fos.flush();
             fos.close();
             return file;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -444,9 +433,9 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
         MultipartBody.Part profilePic = null;
         MultipartBody.Part idPic = null;
         String agentName = agentNameText.getText().toString();
-        String agentPhone = "91"+agentPhoneText.getText().toString();
+        String agentPhone = "91" + agentPhoneText.getText().toString();
         String agentAadhar = agentAadharText.getText().toString();
-        if(isValidForm(agentName,agentPhone,agentAadhar)){
+        if (isValidForm(agentName, agentPhone, agentAadhar)) {
             phoneNumber = agentPhone;
             showDialog("Registering Pickup Agent!");
             RequestBody name = RequestBody.create(MediaType.parse("multipart/form-data"),
@@ -470,19 +459,18 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
             ApiInterface apiService = apiClient.getClient().create(ApiInterface.class);
             String jwtToken = "Bearer " + sharedPreference.getJwtToken();
             Call<HashMap<Object, Object>> call = apiService.registerPickupBoy(
-                    jwtToken,profilePic,idPic,name,phone,aadhar);
+                    jwtToken, profilePic, idPic, name, phone, aadhar);
             call.enqueue(new Callback<HashMap<Object, Object>>() {
                 @Override
                 public void onResponse(Call<HashMap<Object, Object>> call, Response<HashMap<Object, Object>> response) {
-                    Log.d("Ayush",response.toString());
                     if (response.isSuccessful() && response.body() != null) {
-                        HashMap<Object,Object> resultMap = response.body();
-                        int statusCode = (int)(double)resultMap.get("statusCode");
-                        if(statusCode == 1){
+                        HashMap<Object, Object> resultMap = response.body();
+                        int statusCode = (int) (double) resultMap.get("statusCode");
+                        if (statusCode == 1) {
                             updateDialog.dismiss();
                             registerFormLayout.setVisibility(View.GONE);
                             otpLayout.setVisibility(View.VISIBLE);
-                        }else if(statusCode == -1){
+                        } else if (statusCode == -1) {
                             updateDialog.dismiss();
                             errorTV.setVisibility(View.VISIBLE);
                             errorTV.setText("Phone number already in use!");
@@ -492,7 +480,7 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
                                     errorTV.setVisibility(View.INVISIBLE);
                                 }
                             }, 3000);
-                        } else{
+                        } else {
                             updateDialog.dismiss();
                             errorTV.setVisibility(View.VISIBLE);
                             errorTV.setText("Try Again!");
@@ -503,7 +491,7 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
                                 }
                             }, 3000);
                         }
-                    }else{
+                    } else {
                         updateDialog.dismiss();
                         errorTV.setVisibility(View.VISIBLE);
                         errorTV.setText("Try Again!");
@@ -532,7 +520,7 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
         }
     }
 
-    private boolean isValidForm(String name, String phone, String aadhar){
+    private boolean isValidForm(String name, String phone, String aadhar) {
         Pattern pattern = Pattern.compile("[0-9]{12}");
         Matcher m = pattern.matcher(phone);
         String aadharRegex = "\\d{12}";
@@ -548,7 +536,7 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
             return false;
         }
 
-        if(currentImage == null){
+        if (currentImage == null) {
             errorTV.setVisibility(View.VISIBLE);
             errorTV.setText("Upload Profile Photo");
             errorTV.postDelayed(new Runnable() {
@@ -560,7 +548,7 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
             return false;
         }
 
-        if(currentIdImage == null){
+        if (currentIdImage == null) {
             errorTV.setVisibility(View.VISIBLE);
             errorTV.setText("Upload Aadhar Card");
             errorTV.postDelayed(new Runnable() {
@@ -611,7 +599,7 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
         updateDialog.show();
     }
 
-    private void showSnackbar(View view ,String text){
+    private void showSnackbar(View view, String text) {
         customSnackbar = Snackbar.make(view, text, Snackbar.LENGTH_LONG);
         View snackBarView = customSnackbar.getView();
         snackBarView.setBackgroundColor(getResources().getColor(R.color.svSelectedColor));
@@ -620,7 +608,7 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
         customSnackbar.show();
     }
 
-    private void showSuccessDialog(){
+    private void showSuccessDialog() {
         ImageView dialog_image;
         TextView dialog_text;
         updateDialog.setContentView(R.layout.loading_popup);

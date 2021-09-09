@@ -37,13 +37,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ForgotPasswordActivity extends AppCompatActivity  implements TextWatcher {
+public class ForgotPasswordActivity extends AppCompatActivity implements TextWatcher {
 
     RelativeLayout firstLayout;
     LinearLayout secondLayout;
     Button firstNextButton;
     Button resendOtpButton;
-    Button changePasswordButton;
     EditText phoneNumberEditText;
     String sessionToken;
     String phoneNumber;
@@ -100,35 +99,35 @@ public class ForgotPasswordActivity extends AppCompatActivity  implements TextWa
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(phoneNumberEditText.getText().toString().length() == 10){
+                if (phoneNumberEditText.getText().toString().length() == 10) {
                     firstNextButton.setEnabled(true);
                 }
             }
         });
 
-        firstNextButton.setOnClickListener(v ->{
+        firstNextButton.setOnClickListener(v -> {
             showDialog("Never Forget to contribute fot the greener world!");
-            phoneNumber = "91"+phoneNumberEditText.getText().toString();
+            phoneNumber = "91" + phoneNumberEditText.getText().toString();
             Pattern pattern = Pattern.compile("[0-9]{12}");
             Matcher m = pattern.matcher(phoneNumber);
             if (!TextUtils.isEmpty(phoneNumber) && m.find() && m.group().equals(phoneNumber)) {
                 ApiClient apiClient = new ApiClient(getApplicationContext());
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-                Call<HashMap<Object,Object>> call = apiService.forgotPassword(phoneNumber);
+                Call<HashMap<Object, Object>> call = apiService.forgotPassword(phoneNumber);
                 call.enqueue(new Callback<HashMap<Object, Object>>() {
                     @Override
                     public void onResponse(Call<HashMap<Object, Object>> call, Response<HashMap<Object, Object>> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            HashMap<Object,Object> resultMap = response.body();
-                            int statusCode = (int)(double)resultMap.get("statusCode");
-                            if(statusCode == 1){
+                            HashMap<Object, Object> resultMap = response.body();
+                            int statusCode = (int) (double) resultMap.get("statusCode");
+                            if (statusCode == 1) {
                                 phoneNumberEditText.setText(null);
                                 sessionToken = resultMap.get("message").toString();
                                 updateDialog.dismiss();
                                 firstLayout.setVisibility(View.GONE);
                                 secondLayout.setVisibility(View.VISIBLE);
                                 startTimer();
-                            }else if(statusCode == -1){
+                            } else if (statusCode == -1) {
                                 updateDialog.dismiss();
                                 firstLayout.setVisibility(View.VISIBLE);
                                 errorTV.setVisibility(View.VISIBLE);
@@ -139,7 +138,7 @@ public class ForgotPasswordActivity extends AppCompatActivity  implements TextWa
                                         errorTV.setVisibility(View.INVISIBLE);
                                     }
                                 }, 3000);
-                            }else{
+                            } else {
                                 updateDialog.dismiss();
                                 firstLayout.setVisibility(View.VISIBLE);
                                 errorTV.setVisibility(View.VISIBLE);
@@ -151,7 +150,7 @@ public class ForgotPasswordActivity extends AppCompatActivity  implements TextWa
                                     }
                                 }, 3000);
                             }
-                        }else{
+                        } else {
                             updateDialog.dismiss();
                             firstLayout.setVisibility(View.VISIBLE);
                             errorTV.setVisibility(View.VISIBLE);
@@ -185,26 +184,26 @@ public class ForgotPasswordActivity extends AppCompatActivity  implements TextWa
         resendOtpButton.setOnClickListener(v -> {
             ApiClient apiClient = new ApiClient(getApplicationContext());
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-            Call<HashMap<Object,Object>> call = apiService.resendOtp(phoneNumber,"resetPassword");
-            call.enqueue(new Callback<HashMap<Object,Object>>() {
+            Call<HashMap<Object, Object>> call = apiService.resendOtp(phoneNumber, "resetPassword");
+            call.enqueue(new Callback<HashMap<Object, Object>>() {
                 @Override
-                public void onResponse(Call<HashMap<Object,Object>> call, Response<HashMap<Object,Object>> response) {
-                    if(response.isSuccessful() && response.body() != null){
-                        HashMap<Object,Object> resultMap = response.body();
-                        int statusCode = (int)(double)resultMap.get("statusCode");
-                        if(statusCode == 1) {
+                public void onResponse(Call<HashMap<Object, Object>> call, Response<HashMap<Object, Object>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        HashMap<Object, Object> resultMap = response.body();
+                        int statusCode = (int) (double) resultMap.get("statusCode");
+                        if (statusCode == 1) {
                             showSnackbar(secondLayout, "Otp Sent");
                             startTimer();
-                        }else{
+                        } else {
                             showSnackbar(secondLayout, "Otp Sending Failed!");
                         }
-                    }else {
+                    } else {
                         showSnackbar(secondLayout, "Otp Sending Failed!");
                     }
                 }
 
                 @Override
-                public void onFailure(Call<HashMap<Object,Object>> call, Throwable t) {
+                public void onFailure(Call<HashMap<Object, Object>> call, Throwable t) {
                     showSnackbar(secondLayout, "Otp Sending Failed!");
                 }
             });
@@ -212,8 +211,7 @@ public class ForgotPasswordActivity extends AppCompatActivity  implements TextWa
     }
 
 
-
-    public void verifyOtp(){
+    public void verifyOtp() {
         String otpValue = editText_one.getText().toString() + "" + editText_two.getText().toString() + ""
                 + editText_three.getText().toString() + "" + editText_four.getText().toString()
                 + "" + editText_five.getText().toString() + "" + editText_six.getText().toString();
@@ -221,14 +219,14 @@ public class ForgotPasswordActivity extends AppCompatActivity  implements TextWa
             showDialog("The Earth needs to know whether you really want to contribute towards greener world!");
             ApiClient apiClient = new ApiClient(getApplicationContext());
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-            Call<HashMap<Object,Object>> call = apiService.otpVerify(otpValue,phoneNumber,"resetPassword");
-            call.enqueue(new Callback<HashMap<Object,Object>>() {
+            Call<HashMap<Object, Object>> call = apiService.otpVerify(otpValue, phoneNumber, "resetPassword");
+            call.enqueue(new Callback<HashMap<Object, Object>>() {
                 @Override
-                public void onResponse(Call<HashMap<Object,Object>> call, Response<HashMap<Object,Object>> response) {
+                public void onResponse(Call<HashMap<Object, Object>> call, Response<HashMap<Object, Object>> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         HashMap<Object, Object> resultMap = response.body();
                         int statusCode = (int) (double) resultMap.get("statusCode");
-                        if(statusCode == 1){
+                        if (statusCode == 1) {
                             updateDialog.dismiss();
                             secondLayout.setVisibility(View.VISIBLE);
                             showSuccessDialog();
@@ -236,28 +234,28 @@ public class ForgotPasswordActivity extends AppCompatActivity  implements TextWa
                                 @Override
                                 public void run() {
                                     //Do something here
-                                    Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
+                                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                                     startActivity(intent);
                                     finish();
                                 }
                             }, 5000);
-                        }else{
+                        } else {
                             updateDialog.dismiss();
                             secondLayout.setVisibility(View.VISIBLE);
-                            showSnackbar(secondLayout,"OTP Mismatch!");
+                            showSnackbar(secondLayout, "OTP Mismatch!");
                         }
-                    }else {
+                    } else {
                         updateDialog.dismiss();
                         secondLayout.setVisibility(View.VISIBLE);
-                        showSnackbar(secondLayout,"Something went wrong!");
+                        showSnackbar(secondLayout, "Something went wrong!");
                     }
                 }
 
                 @Override
-                public void onFailure(Call<HashMap<Object,Object>> call, Throwable t) {
+                public void onFailure(Call<HashMap<Object, Object>> call, Throwable t) {
                     updateDialog.dismiss();
                     secondLayout.setVisibility(View.VISIBLE);
-                    showSnackbar(secondLayout,"Something went wrong!");
+                    showSnackbar(secondLayout, "Something went wrong!");
                 }
             });
         }
@@ -265,12 +263,12 @@ public class ForgotPasswordActivity extends AppCompatActivity  implements TextWa
 
     @Override
     public void onBackPressed() {
-        if(secondLayout.getVisibility() == View.VISIBLE){
+        if (secondLayout.getVisibility() == View.VISIBLE) {
 //                || thirdLayout.getVisibility() == View.VISIBLE){
             secondLayout.setVisibility(View.GONE);
 //            thirdLayout.setVisibility(View.GONE);
             firstLayout.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             startActivity(new Intent(ForgotPasswordActivity.this, LoginActivity.class));
             finish();
         }
@@ -341,7 +339,7 @@ public class ForgotPasswordActivity extends AppCompatActivity  implements TextWa
         updateDialog.show();
     }
 
-    private void showSnackbar(View view ,String text){
+    private void showSnackbar(View view, String text) {
         customSnackbar = Snackbar.make(view, text, Snackbar.LENGTH_LONG);
         View snackBarView = customSnackbar.getView();
         snackBarView.setBackgroundColor(getResources().getColor(R.color.svSelectedColor));
@@ -350,7 +348,7 @@ public class ForgotPasswordActivity extends AppCompatActivity  implements TextWa
         customSnackbar.show();
     }
 
-    public void startTimer(){
+    public void startTimer() {
         new CountDownTimer(45000, 1000) {
             @Override
             public void onTick(long l) {
@@ -367,7 +365,7 @@ public class ForgotPasswordActivity extends AppCompatActivity  implements TextWa
         }.start();
     }
 
-    private void showSuccessDialog(){
+    private void showSuccessDialog() {
         ImageView dialog_image;
         TextView dialog_text;
         updateDialog.setContentView(R.layout.loading_popup);

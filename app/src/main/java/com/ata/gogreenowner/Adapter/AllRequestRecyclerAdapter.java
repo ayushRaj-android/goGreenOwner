@@ -1,6 +1,5 @@
 package com.ata.gogreenowner.Adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -22,17 +21,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRecyclerAdapter.ViewHolder> {
 
-    Context context;
-    public JSONArray requestListToShow;
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E, dd-MMM-yyyy");
+    public JSONArray requestListToShow;
+    Context context;
 
     public AllRequestRecyclerAdapter(Context context, JSONArray requestList) {
         this.context = context;
@@ -73,72 +71,67 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mView = itemView;
-            address_tv=itemView.findViewById(R.id.address_tv);
-            order_placement_time=itemView.findViewById(R.id.order_placement_time);
-            step_view=itemView.findViewById(R.id.step_view);
-            weightValueTab=itemView.findViewById(R.id.weightValueTab);
-            lineAboveWeight=itemView.findViewById(R.id.lineAboveWeight);
+            address_tv = itemView.findViewById(R.id.address_tv);
+            order_placement_time = itemView.findViewById(R.id.order_placement_time);
+            step_view = itemView.findViewById(R.id.step_view);
+            weightValueTab = itemView.findViewById(R.id.weightValueTab);
+            lineAboveWeight = itemView.findViewById(R.id.lineAboveWeight);
             weightText = itemView.findViewById(R.id.weightText);
             valueText = itemView.findViewById(R.id.valueText);
         }
 
-        public void bindViewHolder(JSONObject jsonObject){
+        public void bindViewHolder(JSONObject jsonObject) {
             try {
-                JSONObject addressObj=new JSONObject(jsonObject.get("req_address").toString());
+                JSONObject addressObj = new JSONObject(jsonObject.get("req_address").toString());
                 address_tv.setText(addressObj.getString("street"));
-                Timestamp requestDate=Timestamp.valueOf(jsonObject.get("requestDate").toString());
-                Date date=new Date(requestDate.getTime());
+                Timestamp requestDate = Timestamp.valueOf(jsonObject.get("requestDate").toString());
+                Date date = new Date(requestDate.getTime());
                 String timeStamp = new SimpleDateFormat("EE, dd-MMM-yyyy").format(date);
                 order_placement_time.setText(timeStamp);
-                int status=jsonObject.getInt("status");
-                mView.setOnClickListener( v->{
-                    Log.d("Ayush",jsonObject.toString());
+                int status = jsonObject.getInt("status");
+                mView.setOnClickListener(v -> {
                     startRequestDetailsActivity(jsonObject);
                 });
 
-                if(status==0){
+                if (status == 0) {
                     step_view.selectedStep(1);
                     weightValueTab.setVisibility(View.GONE);
                     lineAboveWeight.setVisibility(View.GONE);
-                }
-                else if(status==1){
+                } else if (status == 1) {
                     step_view.selectedStep(2);
                     weightValueTab.setVisibility(View.GONE);
                     lineAboveWeight.setVisibility(View.GONE);
-                }
-                else if(status==3){
+                } else if (status == 3) {
                     step_view.selectedStep(3);
                     weightValueTab.setVisibility(View.VISIBLE);
                     lineAboveWeight.setVisibility(View.VISIBLE);
-                    if(jsonObject.get("amount") != null){
-                        valueText.setText("Value :- \u20B9 "+jsonObject.get("amount").toString());
-                    }else{
+                    if (jsonObject.get("amount") != null) {
+                        valueText.setText("Value :- \u20B9 " + jsonObject.get("amount").toString());
+                    } else {
                         valueText.setText("Value :- N/A");
                     }
 
-                    if(jsonObject.has("weight") && jsonObject.get("weight") != null){
-                        weightText.setText("Weight :- "+jsonObject.get("weight").toString());
-                    }else{
+                    if (jsonObject.has("weight") && jsonObject.get("weight") != null) {
+                        weightText.setText("Weight :- " + jsonObject.get("weight").toString() + " kg");
+                    } else {
                         weightText.setText("Weight :- N/A");
                     }
-                }
-                else if(status==5){
+                } else if (status == 5) {
                     step_view.selectedStep(4);
                     weightValueTab.setVisibility(View.VISIBLE);
                     lineAboveWeight.setVisibility(View.VISIBLE);
-                    if(jsonObject.get("amount") != null){
-                        valueText.setText("Value :- \u20B9 "+jsonObject.get("amount").toString());
-                    }else{
+                    if (jsonObject.get("amount") != null) {
+                        valueText.setText("Value :- \u20B9 " + jsonObject.get("amount").toString());
+                    } else {
                         valueText.setText("Value :- N/A");
                     }
 
-                    if(jsonObject.has("weight") && jsonObject.get("weight") != null){
-                        weightText.setText("Weight :- "+jsonObject.get("weight").toString());
-                    }else{
+                    if (jsonObject.has("weight") && jsonObject.get("weight") != null) {
+                        weightText.setText("Weight :- " + jsonObject.get("weight").toString() + " kg");
+                    } else {
                         weightText.setText("Weight :- N/A");
                     }
-                }
-                else{
+                } else {
                     step_view.cancel(true);
                     weightValueTab.setVisibility(View.GONE);
                     lineAboveWeight.setVisibility(View.GONE);
@@ -148,31 +141,40 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
             }
         }
 
-        public void startRequestDetailsActivity(JSONObject jsonObject){
-            Log.d("Ayush",jsonObject.toString());
+        public void startRequestDetailsActivity(JSONObject jsonObject) {
             try {
                 int status = Integer.parseInt(jsonObject.get("status").toString());
                 Intent intent = new Intent(context, RequestDetailsActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("status", status);
                 JSONObject addressObject = jsonObject.getJSONObject("req_address");
-                intent.putExtra("pickupLocation",addressObject.get("street").toString());
+                intent.putExtra("pickupLocation", addressObject.get("street").toString());
+                intent.putExtra("locality", addressObject.get("locality").toString());
                 Timestamp requestPlacementTimestamp = getTimestampFromString(
                         jsonObject.get("requestPlacementTimestamp").toString());
                 Date requestPlacementDate = new Date(requestPlacementTimestamp.getTime());
                 intent.putExtra("reqPlacementDate",
                         simpleDateFormat.format(requestPlacementDate));
-                Timestamp pickupTimestamp =getTimestampFromString(jsonObject.get("requestDate")
+                Timestamp pickupTimestamp = getTimestampFromString(jsonObject.get("requestDate")
                         .toString());
                 Date pickupDate = new Date(pickupTimestamp.getTime());
-                String pickupTime = simpleDateFormat.format(pickupDate)+", "+
+                String pickupTime = simpleDateFormat.format(pickupDate) + ", " +
                         jsonObject.get("timeSlot").toString();
-                intent.putExtra("pickupTime",pickupTime);
-                intent.putExtra("latitude",addressObject.get("latitude").toString());
-                intent.putExtra("longitude",addressObject.get("longitude").toString());
-                intent.putExtra("locality",addressObject.get("locality").toString());
-                intent.putExtra("requestId",jsonObject.get("requestId").toString());
-                if(status > 0) {
+                intent.putExtra("pickupTime", pickupTime);
+                try {
+                    Timestamp serviceCompletionTimestamp = getTimestampFromString(
+                            jsonObject.get("serviceCompletionTimestamp").toString());
+                    Date serviceCompletionDate = new Date(requestPlacementTimestamp.getTime());
+                    intent.putExtra("serviceCompletionDate",
+                            simpleDateFormat.format(serviceCompletionDate));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                intent.putExtra("latitude", addressObject.get("latitude").toString());
+                intent.putExtra("longitude", addressObject.get("longitude").toString());
+                intent.putExtra("locality", addressObject.get("locality").toString());
+                intent.putExtra("requestId", jsonObject.get("requestId").toString());
+                if (status > 0) {
                     try {
                         JSONObject pickupBoyObj = jsonObject.getJSONObject("boyAssigned");
                         try {
@@ -192,12 +194,18 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                    }catch (Exception e){
+
+                        try {
+                            intent.putExtra("pickupBoyRating", pickupBoyObj.getString("rating"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
 
-                if(status >= 3){
+                if (status >= 3) {
                     try {
                         intent.putExtra("amount", jsonObject.getString("amount"));
                     } catch (JSONException e) {
@@ -211,14 +219,14 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
                     }
                 }
                 context.startActivity(intent);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        public Timestamp getTimestampFromString(String timestampString){
+        public Timestamp getTimestampFromString(String timestampString) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-            if(timestampString != null){
+            if (timestampString != null) {
                 Date date = null;
                 try {
                     date = sdf.parse(timestampString);

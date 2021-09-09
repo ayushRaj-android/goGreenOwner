@@ -34,7 +34,6 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
                 android:includeFontPadding="true"
-                android:text="Ayush Raj"
                 android:textSize="20sp"
                 android:textColor="@color/colorAccent"/>
 
@@ -55,7 +54,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mobile"
+            android:text="@string/phone_number"
             android:textStyle="bold"
             android:layout_marginTop="10dp"
             android:textSize="20sp"
@@ -65,7 +64,6 @@
             android:id="@+id/pickUp_mobile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="8084805576"
             android:layout_marginTop="10dp"
             android:textSize="20sp"
             android:textColor="@color/secondary_text"/>
@@ -73,7 +71,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Number of pickups"
+            android:text="@string/number_of_pickups"
             android:textStyle="bold"
             android:layout_marginTop="10dp"
             android:textSize="20sp"
@@ -83,7 +81,6 @@
             android:id="@+id/total_pickups"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="34"
             android:layout_marginTop="10dp"
             android:textSize="20sp"
             android:textColor="@color/secondary_text"/>
@@ -91,7 +88,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Weight Picked Up"
+            android:text="@string/weight_picked_up"
             android:textStyle="bold"
             android:layout_marginTop="10dp"
             android:textSize="20sp"
@@ -100,26 +97,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="34 kg"
             android:layout_marginTop="10dp"
             android:textSize="20sp"
-            android:textColor="@color/secondary_text"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Address"
-            android:textStyle="bold"
-            android:layout_marginTop="10dp"
-            android:textSize="20sp"
-            android:textColor="@color/colorAccent"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="104, Green Enclave, Arya Kumar road,\n Patna-3"
-            android:layout_marginTop="10dp"
-            android:textSize="20sp"
+            android:id="@+id/total_weight_picked"
             android:textColor="@color/secondary_text"/>
 
     </LinearLayout>

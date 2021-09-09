@@ -35,7 +35,7 @@
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.29583333333333334" />
         <entry key="app/src/main/res/layout/activity_pending_request.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_pickup_agent.xml" value="0.28703703703703703" />
-        <entry key="app/src/main/res/layout/activity_pickup_agent_detail.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_pickup_agent_detail.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_regsiter_pickup_agent.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_request_details.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_requests.xml" value="0.30512820512820515" />

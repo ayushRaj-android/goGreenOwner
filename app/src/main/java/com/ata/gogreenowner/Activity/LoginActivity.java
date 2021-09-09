@@ -5,20 +5,19 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.ata.gogreenowner.Adapter.ApiClient;
 import com.ata.gogreenowner.Adapter.ApiInterface;
 import com.ata.gogreenowner.Model.LoginObject;
 import com.ata.gogreenowner.R;
-import com.bumptech.glide.Glide;
 import com.ata.gogreenowner.Utility.SharedPreference;
+import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.HashMap;
@@ -62,18 +61,14 @@ public class LoginActivity extends BaseActivity {
                 showDialog("Earth is excited seeing you getting ready for contributing to the greener world!");
 
                 LoginObject loginObject = new LoginObject(phone, password, null, null);
-                Log.d("Ayush", loginObject.toString());
                 Call<HashMap<Object, Object>> call = apiService.userLogin(loginObject);
                 call.enqueue(new Callback<HashMap<Object, Object>>() {
                     @Override
                     public void onResponse(Call<HashMap<Object, Object>> call,
                                            Response<HashMap<Object, Object>> response) {
-                        Log.d("Ayush", response.toString());
                         if (response.isSuccessful() && response.body() != null) {
-                            Log.d("Ayush", response.body().toString());
                             HashMap<Object, Object> resultMap = response.body();
                             int statusCode = (int) (double) resultMap.get("statusCode");
-                            Log.d("Ayush", String.valueOf(statusCode));
                             if (statusCode == -1) {
                                 updateDialog.dismiss();
                                 errorTV.setVisibility(View.VISIBLE);

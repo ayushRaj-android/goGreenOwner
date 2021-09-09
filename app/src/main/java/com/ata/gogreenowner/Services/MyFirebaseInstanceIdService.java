@@ -19,6 +19,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+
+import com.ata.gogreenowner.Activity.RequestsActivity;
 import com.ata.gogreenowner.Activity.SplashActivity;
 import com.ata.gogreenowner.Adapter.ApiClient;
 import com.ata.gogreenowner.Adapter.ApiInterface;
@@ -98,15 +100,22 @@ public class MyFirebaseInstanceIdService extends FirebaseMessagingService {
         Map<String, String> hashMap = remoteMessage.getData();
         String type = hashMap.get("type");
         if (type == null) {
-            createNotification(messageTitle, messageBody);
+            createNotification(messageTitle, messageBody,0);
+        }else{
+            createNotification(messageTitle, messageBody,1);
         }
     }
 
-    public void createNotification(String title, String body) {
+    public void createNotification(String title, String body,int flag) {
         int id = (int) System.currentTimeMillis();
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Uri notificationSoundURI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Intent intent = new Intent(this, SplashActivity.class);
+        Intent intent = null;
+        if(flag == 0){
+            intent = new Intent(this, SplashActivity.class);
+        }else{
+            new Intent(this, RequestsActivity.class);
+        }
         PendingIntent pendingIntent;
         if (isAppInForeground()) {
             pendingIntent = null;

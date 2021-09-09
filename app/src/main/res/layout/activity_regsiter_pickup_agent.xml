@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="Register Pick-up Agent"
+            android:text="@string/register_pick_up_agent"
             android:textColor="@color/colorAccent"
             android:textSize="20sp"
             android:textStyle="bold"/>
@@ -106,7 +106,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:hint="Aadhar Number"
+                    android:hint="@string/aadhar_number"
                     app:boxStrokeWidth="0dp"
                     android:textColor="@color/colorAccent"
                     app:boxStrokeWidthFocused="0dp"
@@ -133,11 +133,11 @@
                         android:id="@+id/uploadPhotoText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Upload Photo"
+                        android:text="@string/upload_photo"
                         android:textSize="16sp"
                         android:layout_gravity="center"
                         android:textColor="@color/black"
-                        android:drawableRight="@drawable/ic_baseline_attachment_24"/>
+                        android:drawableEnd="@drawable/ic_baseline_attachment_24"/>
 
                     <ImageView
                         android:id="@+id/uploadPhotoResImage"
@@ -159,11 +159,11 @@
                         android:id="@+id/uploadAadharText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Upload Aadhar Card"
+                        android:text="@string/upload_aadhar_card"
                         android:textSize="16sp"
                         android:layout_gravity="center"
                         android:textColor="@color/black"
-                        android:drawableRight="@drawable/ic_baseline_attachment_24"/>
+                        android:drawableEnd="@drawable/ic_baseline_attachment_24"/>
 
                     <ImageView
                         android:id="@+id/uploadAadharResImage"
@@ -182,7 +182,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:background="@drawable/card_button"
-                    android:text="Submit"
+                    android:text="@string/submit"
                     android:textColor="@color/white"
                     android:textAllCaps="false"/>
             </LinearLayout>

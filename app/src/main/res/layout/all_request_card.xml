@@ -40,7 +40,6 @@
                     android:layout_toEndOf="@id/marker_image"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="5dp"
-                    android:hint="Address"
                     android:layout_alignParentTop="true"
                     android:ellipsize="marquee"
                     android:focusable="true"
@@ -57,7 +56,6 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/address_tv"
                     android:layout_alignStart="@id/address_tv"
-                    android:text="Wed 14-Dec-2021"
                     android:textSize="12sp"
                     android:gravity="center"
                     android:layout_marginTop="5dp"
@@ -116,7 +114,6 @@
                     android:layout_centerInParent="true"
                     android:drawablePadding="5dp"
                     android:gravity="center"
-                    android:text="Weight : 10kg"
                     android:textColor="@color/black" />
             </RelativeLayout>
 
@@ -133,7 +130,6 @@
                     android:layout_centerInParent="true"
                     android:drawablePadding="5dp"
                     android:gravity="center"
-                    android:text="Value : Rs.250"
                     android:textColor="@color/black" />
             </RelativeLayout>
 

@@ -60,7 +60,6 @@
                         android:layout_marginEnd="5dp"
                         android:layout_toEndOf="@id/marker_image"
                         android:gravity="start"
-                        android:hint="Address"
                         android:textColor="@color/black"
                         android:textSize="13sp" />
                 </RelativeLayout>
@@ -88,14 +87,13 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:textColor="@color/black"
-                    android:text="Request Date :- "/>
+                    android:text="@string/request_date"/>
 
                 <TextView
                     android:id="@+id/request_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorAccent"
-                    android:hint="15-Sept-2020"/>
+                    android:textColor="@color/colorAccent"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="300dp"
@@ -107,7 +105,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Request Time :- "
+                    android:text="@string/request_time"
                     android:textStyle="bold"
                     android:textColor="@color/black" />
 
@@ -115,8 +113,7 @@
                     android:id="@+id/request_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorAccent"
-                    android:hint="10:00a.m-12:00p.m"/>
+                    android:textColor="@color/colorAccent"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
