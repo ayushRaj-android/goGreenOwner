@@ -63,12 +63,11 @@ public class MyFirebaseInstanceIdService extends FirebaseMessagingService {
 
     private void updateFCMForUser(String token, String deviceId) {
         try {
-            String jwtToken = "Bearer " + sharedPreference.getRefreshToken();
             String userPhone = sharedPreference.getUserPhone();
-            JunkYardOwnerDeviceFCM  junkYardOwnerDeviceFCM = new JunkYardOwnerDeviceFCM(deviceId,token,null);
+            JunkYardOwnerDeviceFCM  junkYardOwnerDeviceFCM = new JunkYardOwnerDeviceFCM(deviceId,token,userPhone);
             ApiClient apiClient = new ApiClient(this);
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-            Call<HashMap<Object, Object>> call = apiService.registerDevice(jwtToken,userPhone,junkYardOwnerDeviceFCM);
+            Call<HashMap<Object, Object>> call = apiService.registerDevice(junkYardOwnerDeviceFCM,"junkyard owner");
             call.enqueue(new Callback<HashMap<Object, Object>>() {
                 @SneakyThrows
                 @Override
@@ -95,8 +94,18 @@ public class MyFirebaseInstanceIdService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(@NonNull @NotNull RemoteMessage remoteMessage) {
-        String messageTitle = remoteMessage.getData().get("title");
-        String messageBody = remoteMessage.getData().get("body");
+        String messageTitle = null;
+        if(remoteMessage.getNotification().getTitle() != null){
+            messageTitle = remoteMessage.getNotification().getTitle();
+        }else{
+            messageTitle = remoteMessage.getData().get("title");
+        }
+        String messageBody = null;
+        if(remoteMessage.getNotification().getBody() != null){
+            messageBody = remoteMessage.getNotification().getBody();
+        }else{
+            messageBody = remoteMessage.getData().get("body");
+        }
         Map<String, String> hashMap = remoteMessage.getData();
         String type = hashMap.get("type");
         if (type == null) {

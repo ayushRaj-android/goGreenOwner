@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.ata.gogreenowner.R;
 import com.ata.gogreenowner.Utility.SharedPreference;
 import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
 
@@ -59,50 +61,65 @@ public class LoginActivity extends BaseActivity {
             String password = passwordText.getText().toString();
             if (!TextUtils.isEmpty(phone) && !TextUtils.isEmpty(password)) {
                 showDialog("Earth is excited seeing you getting ready for contributing to the greener world!");
-
-                LoginObject loginObject = new LoginObject(phone, password, null, null);
-                Call<HashMap<Object, Object>> call = apiService.userLogin(loginObject);
-                call.enqueue(new Callback<HashMap<Object, Object>>() {
-                    @Override
-                    public void onResponse(Call<HashMap<Object, Object>> call,
-                                           Response<HashMap<Object, Object>> response) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            HashMap<Object, Object> resultMap = response.body();
-                            int statusCode = (int) (double) resultMap.get("statusCode");
-                            if (statusCode == -1) {
-                                updateDialog.dismiss();
-                                errorTV.setVisibility(View.VISIBLE);
-                                errorTV.setText("Wrong Phone Number/Password!");
-                                errorTV.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        errorTV.setVisibility(View.GONE);
-                                    }
-                                }, 5000);
-
-                            } else if (statusCode == 1) {
-                                try {
-                                    String jwtToken = resultMap.get("accessToken").toString();
-                                    String refreshToken = resultMap.get("refreshToken").toString();
-                                    String name = resultMap.get("name").toString();
-                                    Object profilePicObject = resultMap.get("imageUrl");
-                                    String profilePic = null;
-                                    if (profilePicObject != null) {
-                                        profilePic = resultMap.get("imageUrl").toString();
-                                    }
-                                    sharedPreference.createUserLoginSession(name,
-                                            phone, profilePic, jwtToken, refreshToken, null, null);
-//                                        getAddress(jwtToken);
-                                    Intent intent = new Intent(getApplicationContext()
-                                            , DashboardActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(intent);
-                                    finish();
-                                } catch (Exception e) {
+                FirebaseMessaging.getInstance().getToken().addOnSuccessListener(s ->{
+                    String newToken = s;
+                    String android_id = Settings.Secure.getString(this.getContentResolver(),
+                            Settings.Secure.ANDROID_ID);
+                    LoginObject loginObject = new LoginObject(phone, password, newToken, android_id);
+                    Call<HashMap<Object, Object>> call = apiService.userLogin(loginObject);
+                    call.enqueue(new Callback<HashMap<Object, Object>>() {
+                        @Override
+                        public void onResponse(Call<HashMap<Object, Object>> call,
+                                               Response<HashMap<Object, Object>> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                HashMap<Object, Object> resultMap = response.body();
+                                int statusCode = (int) (double) resultMap.get("statusCode");
+                                if (statusCode == -1) {
                                     updateDialog.dismiss();
                                     errorTV.setVisibility(View.VISIBLE);
-                                    errorTV.setText("Extraction Error");
+                                    errorTV.setText("Wrong Phone Number/Password!");
+                                    errorTV.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            errorTV.setVisibility(View.GONE);
+                                        }
+                                    }, 5000);
+
+                                } else if (statusCode == 1) {
+                                    try {
+                                        String jwtToken = resultMap.get("accessToken").toString();
+                                        String refreshToken = resultMap.get("refreshToken").toString();
+                                        String name = resultMap.get("name").toString();
+                                        Object profilePicObject = resultMap.get("imageUrl");
+                                        String profilePic = null;
+                                        if (profilePicObject != null) {
+                                            profilePic = resultMap.get("imageUrl").toString();
+                                        }
+                                        sharedPreference.createUserLoginSession(name,
+                                                phone, profilePic, jwtToken, refreshToken, null, null);
+//                                        getAddress(jwtToken);
+                                        Intent intent = new Intent(getApplicationContext()
+                                                , DashboardActivity.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(intent);
+                                        finish();
+                                    } catch (Exception e) {
+                                        updateDialog.dismiss();
+                                        errorTV.setVisibility(View.VISIBLE);
+                                        errorTV.setText("Extraction Error");
+                                        errorTV.postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                errorTV.setVisibility(View.GONE);
+                                            }
+                                        }, 5000);
+                                    }
+
+                                } else {
+                                    updateDialog.dismiss();
+                                    errorTV.setVisibility(View.VISIBLE);
+                                    errorTV.setText("Login Failed!");
                                     errorTV.postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
@@ -110,7 +127,6 @@ public class LoginActivity extends BaseActivity {
                                         }
                                     }, 5000);
                                 }
-
                             } else {
                                 updateDialog.dismiss();
                                 errorTV.setVisibility(View.VISIBLE);
@@ -122,10 +138,13 @@ public class LoginActivity extends BaseActivity {
                                     }
                                 }, 5000);
                             }
-                        } else {
+                        }
+
+                        @Override
+                        public void onFailure(Call<HashMap<Object, Object>> call, Throwable t) {
                             updateDialog.dismiss();
                             errorTV.setVisibility(View.VISIBLE);
-                            errorTV.setText("Login Failed!");
+                            errorTV.setText("Login Failed! Try Again!");
                             errorTV.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
@@ -133,22 +152,18 @@ public class LoginActivity extends BaseActivity {
                                 }
                             }, 5000);
                         }
-                    }
-
-                    @Override
-                    public void onFailure(Call<HashMap<Object, Object>> call, Throwable t) {
-                        updateDialog.dismiss();
-                        errorTV.setVisibility(View.VISIBLE);
-                        errorTV.setText("Login Failed! Try Again!");
-                        errorTV.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                errorTV.setVisibility(View.GONE);
-                            }
-                        }, 5000);
-                    }
+                    });
+                }).addOnFailureListener(e->{
+                    updateDialog.dismiss();
+                    errorTV.setVisibility(View.VISIBLE);
+                    errorTV.setText("Login Failed! Try Again!");
+                    errorTV.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            errorTV.setVisibility(View.GONE);
+                        }
+                    }, 5000);
                 });
-
             } else {
                 errorTV.setVisibility(View.VISIBLE);
                 errorTV.setText("Fill the Required Fields!");
