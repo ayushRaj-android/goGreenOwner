@@ -162,7 +162,7 @@ public class MyFirebaseInstanceIdService extends FirebaseMessagingService {
         } else {
             NotificationCompat.Builder builder = null;
             builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-                    .setContentTitle("Challenge Notification")
+                    .setContentTitle(title)
                     .setContentText(body)
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true)
