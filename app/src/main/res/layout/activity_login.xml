@@ -26,9 +26,9 @@
             android:layout_below="@id/logoImage"
             android:layout_marginStart="20dp"
             android:text="@string/welcome_back"
-            android:textSize="20sp"
             android:textColor="@color/colorAccent"
-            android:textStyle="bold|italic"/>
+            android:textSize="20sp"
+            android:textStyle="bold|italic" />
 
         <TextView
             android:id="@+id/errorTV"
@@ -128,23 +128,6 @@
             android:layout_marginRight="60dp"
             android:textColor="@color/colorAccent"
             android:background="@drawable/elevated_button"/>
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/signUpButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/signInButton"
-            android:layout_centerHorizontal="true"
-            android:text="@string/underlined_signUp"
-            android:clickable="true"
-            android:textStyle="bold"
-            android:layout_marginTop="5dp"
-            android:textSize="16sp"
-            android:gravity="center"
-            android:textAllCaps="false"
-            android:textColor="@color/colorAccent"
-            android:background="@color/colorWhiteTransparent"/>
-
 
     </RelativeLayout>
 
