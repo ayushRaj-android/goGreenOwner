@@ -334,7 +334,7 @@ public class PendingRequestActivity extends BaseActivity implements PendingReque
     }
 
     private void showSnackbarAPI() {
-        snackbar = Snackbar.make(pendingReqMainLayout, "Something went wrong!",
+        snackbar = Snackbar.make(findViewById(android.R.id.content), "Something went wrong!",
                 Snackbar.LENGTH_INDEFINITE);
         snackbar.setAction("RETRY", new View.OnClickListener() {
             @Override

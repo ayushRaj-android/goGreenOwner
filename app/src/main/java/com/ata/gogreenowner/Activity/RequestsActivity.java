@@ -52,7 +52,6 @@ public class RequestsActivity extends BaseActivity {
     JSONArray customerArray;
     SharedPreference sharedPreference;
     String radioGrpText = "All";
-    private ConstraintLayout requestMainLayout;
     private RadioGroup reqTypeRadioGrp;
     private AppCompatSpinner searchTypeSpinner;
     private SearchView requestSearchView;
@@ -73,7 +72,6 @@ public class RequestsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         updateDialog = new Dialog(this);
-        requestMainLayout = findViewById(R.id.request_main_layout);
         sharedPreference = new SharedPreference(this);
         allRequestList = new JSONArray();
         todayRequestList = new JSONArray();
@@ -375,7 +373,7 @@ public class RequestsActivity extends BaseActivity {
     }
 
     private void showSnackbarAPI() {
-        snackbar = Snackbar.make(requestMainLayout, "Something went wrong!",
+        snackbar = Snackbar.make(findViewById(android.R.id.content), "Something went wrong!",
                 Snackbar.LENGTH_INDEFINITE);
         snackbar.setAction("RETRY", new View.OnClickListener() {
             @Override

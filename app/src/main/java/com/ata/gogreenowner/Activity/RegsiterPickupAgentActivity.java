@@ -600,7 +600,7 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
     }
 
     private void showSnackbar(View view, String text) {
-        customSnackbar = Snackbar.make(view, text, Snackbar.LENGTH_LONG);
+        customSnackbar = Snackbar.make(findViewById(android.R.id.content), text, Snackbar.LENGTH_LONG);
         View snackBarView = customSnackbar.getView();
         snackBarView.setBackgroundColor(getResources().getColor(R.color.svSelectedColor));
         TextView textView = (TextView) snackBarView.findViewById(com.google.android.material.R.id.snackbar_text);
