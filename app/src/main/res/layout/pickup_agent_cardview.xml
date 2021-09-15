@@ -31,7 +31,6 @@
                 android:id="@+id/pick_agent_card_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ayush Raj"
                 android:textColor="@color/colorAccent"
                 android:textSize="16sp"
                 android:textStyle="bold"/>
@@ -42,7 +41,6 @@
                 android:id="@+id/pick_agent_card_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="6201124947"
                 android:textColor="@color/secondary_text"
                 android:textSize="14sp" />
         </LinearLayout>

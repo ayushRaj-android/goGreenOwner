@@ -1,14 +1,11 @@
 package com.ata.gogreenowner.Adapter;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -20,20 +17,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageButton;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ata.gogreenowner.Activity.PickupAgentActivity;
 import com.ata.gogreenowner.Activity.RequestsActivity;
 import com.ata.gogreenowner.R;
 import com.ata.gogreenowner.Utility.SharedPreference;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.material.snackbar.Snackbar;
 
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,7 +46,7 @@ public class PickupBoyPopupRecyclerAdapter extends RecyclerView.Adapter<PickupBo
     private SharedPreference sharedPreference;
 
     public PickupBoyPopupRecyclerAdapter(Context context, List<JSONObject> jsonObjectList
-            ,Dialog dialog,List<String> selectedRequestIdList) {
+            , Dialog dialog, List<String> selectedRequestIdList) {
         this.context = context;
         this.changingList = jsonObjectList;
         this.dialog = dialog;
@@ -83,36 +74,6 @@ public class PickupBoyPopupRecyclerAdapter extends RecyclerView.Adapter<PickupBo
         return changingList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        private ImageView profilePic;
-        private TextView agentName;
-        private AppCompatImageButton assignButton;
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            profilePic = itemView.findViewById(R.id.pickup_popup_prof_pic);
-            agentName = itemView.findViewById(R.id.pickup_popup_name);
-            assignButton = itemView.findViewById(R.id.pickup_popup_assign);
-        }
-
-        public void bindJSONObject(JSONObject jsonObject){
-            try {
-                String url = jsonObject.getString("profilePic");
-                Glide.with(context).load(url).apply(RequestOptions.circleCropTransform()).optionalCircleCrop().into(profilePic);
-                agentName.setText(jsonObject.get("name").toString());
-                assignButton.setOnClickListener( v->{
-                    try {
-                        callAssignPickupApi(Long.parseLong(jsonObject.get("id").toString()));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                });
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-
     public void filter(String filterWord) {
         changingList.clear();
         if (filterWord == null || filterWord.length() == 0) {
@@ -120,12 +81,11 @@ public class PickupBoyPopupRecyclerAdapter extends RecyclerView.Adapter<PickupBo
         } else {
             try {
                 for (JSONObject jsonObject : mainList) {
-                    if (jsonObject.get("name").toString().toLowerCase().startsWith(filterWord)){
-                        Log.d("Ayush",jsonObject.get("name").toString());
+                    if (jsonObject.get("name").toString().toLowerCase().contains(filterWord)) {
                         changingList.add(jsonObject);
                     }
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 changingList.addAll(mainList);
                 e.printStackTrace();
             }
@@ -133,7 +93,7 @@ public class PickupBoyPopupRecyclerAdapter extends RecyclerView.Adapter<PickupBo
         notifyDataSetChanged();
     }
 
-    public void showLodingPopup(){
+    public void showLodingPopup() {
         ImageView dialog_image;
         TextView dialog_text;
         dialog.setContentView(R.layout.loading_popup);
@@ -147,7 +107,7 @@ public class PickupBoyPopupRecyclerAdapter extends RecyclerView.Adapter<PickupBo
         dialog.show();
     }
 
-    private void showSuccessDialog(){
+    private void showSuccessDialog() {
         ImageView dialog_image;
         TextView dialog_text;
         dialog.setContentView(R.layout.loading_popup);
@@ -161,22 +121,20 @@ public class PickupBoyPopupRecyclerAdapter extends RecyclerView.Adapter<PickupBo
         dialog.show();
     }
 
-    public void callAssignPickupApi(long id){
+    public void callAssignPickupApi(long id) {
         showLodingPopup();
         ApiClient apiClient = new ApiClient(context);
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
         String jwtToken = "Bearer " + sharedPreference.getJwtToken();
-        Call<HashMap<Object,Object>> call = apiService.assignPickupBoy(jwtToken,
-                selectedRequestIdList,id);
+        Call<HashMap<Object, Object>> call = apiService.assignPickupBoy(jwtToken,
+                selectedRequestIdList, id);
         call.enqueue(new Callback<HashMap<Object, Object>>() {
             @Override
             public void onResponse(Call<HashMap<Object, Object>> call, Response<HashMap<Object, Object>> response) {
-                Log.d("Ayush",response.toString());
-                if(response.isSuccessful() && response.body() != null){
-                    HashMap<Object,Object> resultMap = response.body();
-                    int statusCode = (int)(double)resultMap.get("statusCode");
-                    Log.d("Ayush",statusCode+"");
-                    if(statusCode == 2){
+                if (response.isSuccessful() && response.body() != null) {
+                    HashMap<Object, Object> resultMap = response.body();
+                    int statusCode = (int) (double) resultMap.get("statusCode");
+                    if (statusCode == 2) {
                         dialog.dismiss();
                         showSuccessDialog();
                         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -185,13 +143,13 @@ public class PickupBoyPopupRecyclerAdapter extends RecyclerView.Adapter<PickupBo
                                 //Do something here
                                 Intent intent = new Intent(context, RequestsActivity.class);
                                 context.startActivity(intent);
-                                ((Activity)context).finish();
+                                ((Activity) context).finish();
                             }
                         }, 5000);
-                    }else{
+                    } else {
                         dialog.dismiss();
                     }
-                }else{
+                } else {
                     dialog.dismiss();
                 }
             }
@@ -201,5 +159,37 @@ public class PickupBoyPopupRecyclerAdapter extends RecyclerView.Adapter<PickupBo
 
             }
         });
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private ImageView profilePic;
+        private TextView agentName;
+        private AppCompatImageButton assignButton;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            profilePic = itemView.findViewById(R.id.pickup_popup_prof_pic);
+            agentName = itemView.findViewById(R.id.pickup_popup_name);
+            assignButton = itemView.findViewById(R.id.pickup_popup_assign);
+        }
+
+        public void bindJSONObject(JSONObject jsonObject) {
+            try {
+                Log.d("Ayush",jsonObject.toString());
+                String url = jsonObject.getString("profilePicUrl");
+                Glide.with(context).load(url).apply(RequestOptions.circleCropTransform()).optionalCircleCrop().into(profilePic);
+                agentName.setText(jsonObject.get("name").toString());
+                assignButton.setOnClickListener(v -> {
+                    try {
+                        Log.d("Ayush","assign button clicked!");
+                        callAssignPickupApi(Long.parseLong(jsonObject.get("pickupBoyId").toString()));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

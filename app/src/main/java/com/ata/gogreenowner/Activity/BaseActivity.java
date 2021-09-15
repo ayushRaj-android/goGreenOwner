@@ -2,14 +2,14 @@ package com.ata.gogreenowner.Activity;
 
 import static android.net.ConnectivityManager.CONNECTIVITY_ACTION;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.ata.gogreenowner.R;
 import com.ata.gogreenowner.Receivers.NetworkChangeReceiver;

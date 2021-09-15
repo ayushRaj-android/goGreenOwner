@@ -1,7 +1,5 @@
 package com.ata.gogreenowner.Adapter;
 
-import static java.security.AccessController.getContext;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -17,7 +15,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageButton;
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,9 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PickupBoyRecyclerAdapter extends RecyclerView.Adapter<PickupBoyRecyclerAdapter.ViewHolder>
         implements ActivityCompat.OnRequestPermissionsResultCallback{
@@ -60,13 +54,14 @@ public class PickupBoyRecyclerAdapter extends RecyclerView.Adapter<PickupBoyRecy
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         try {
             JSONObject jsonObject = changingList.getJSONObject(position);
+            Log.d("Ayush",jsonObject.toString());
             holder.agentName.setText(jsonObject.get("name").toString());
-            holder.agentPhone.setText(jsonObject.get("phone").toString().substring(2));
-            String url = jsonObject.get("profilePic").toString();
+            holder.agentPhone.setText(jsonObject.get("phoneNumber").toString().substring(2));
+            String url = jsonObject.get("profilePicUrl").toString();
             holder.setProfilePic(url);
             holder.agentCall.setOnClickListener( v->{
                 try {
-                    makeCall(jsonObject.get("phone").toString().substring(2));
+                    makeCall(jsonObject.get("phoneNumber").toString().substring(2));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -158,7 +153,6 @@ public class PickupBoyRecyclerAdapter extends RecyclerView.Adapter<PickupBoyRecy
                 for (int i=0;i< mainList.length();i++) {
                     JSONObject jsonObject = mainList.getJSONObject(i);
                     if (jsonObject.get("name").toString().toLowerCase().startsWith(filterWord)){
-                        Log.d("Ayush",jsonObject.get("name").toString());
                         changingList.put(jsonObject);
                     }
                 }

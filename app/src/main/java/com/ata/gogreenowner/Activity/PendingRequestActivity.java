@@ -1,12 +1,5 @@
 package com.ata.gogreenowner.Activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.SearchView;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -18,12 +11,16 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.ata.gogreenowner.Adapter.AllRequestRecyclerAdapter;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.SearchView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.ata.gogreenowner.Adapter.ApiClient;
 import com.ata.gogreenowner.Adapter.ApiInterface;
 import com.ata.gogreenowner.Adapter.PendingRequestRecyclerAdapter;
 import com.ata.gogreenowner.Adapter.PickupBoyPopupRecyclerAdapter;
-import com.ata.gogreenowner.Adapter.PickupBoyRecyclerAdapter;
 import com.ata.gogreenowner.Model.PendingRequests;
 import com.ata.gogreenowner.R;
 import com.ata.gogreenowner.Utility.PendingRequestListener;
@@ -48,6 +45,7 @@ import retrofit2.Response;
 
 public class PendingRequestActivity extends BaseActivity implements PendingRequestListener {
 
+    SharedPreference sharedPreference;
     private ConstraintLayout pendingReqMainLayout;
     private RecyclerView pendingRequestRV;
     private PendingRequestRecyclerAdapter pendingRequestRecyclerAdapter;
@@ -59,7 +57,6 @@ public class PendingRequestActivity extends BaseActivity implements PendingReque
     private JSONArray pendingRequestArray;
     private List<PendingRequests> pendingRequestsList;
     private Dialog updateDialog;
-    SharedPreference sharedPreference;
     private JSONArray pickupAgentList;
     private List<String> selectedRequestIdList;
     private Context context;
@@ -72,8 +69,8 @@ public class PendingRequestActivity extends BaseActivity implements PendingReque
 
         pendingReqMainLayout = findViewById(R.id.pending_req_main_layout);
         updateDialog = new Dialog(this);
-        sharedPreference=new SharedPreference(this);
-        pendingRequestsList=new ArrayList<>();
+        sharedPreference = new SharedPreference(this);
+        pendingRequestsList = new ArrayList<>();
         selectedRequestIdList = new ArrayList<>();
         context = this;
 
@@ -85,43 +82,42 @@ public class PendingRequestActivity extends BaseActivity implements PendingReque
         unSelectTextView = findViewById(R.id.unselectAllText);
         pendingRequestRV.hasFixedSize();
         pendingRequestRV.setLayoutManager(new LinearLayoutManager(this
-                ,LinearLayoutManager.VERTICAL,false));
+                , LinearLayoutManager.VERTICAL, false));
         assignPickupDialog = new Dialog(this);
         noPendingRequestLayout = findViewById(R.id.noPendingRequestLayout);
 
         getPendingRequestList();
 
-        assignPickupBoyButton.setOnClickListener( v->{
+        assignPickupBoyButton.setOnClickListener(v -> {
             List<PendingRequests> selectedPendingReq = pendingRequestRecyclerAdapter.getSelectedPendingRequest();
             selectedRequestIdList.clear();
-            for(PendingRequests pr : selectedPendingReq){
-                Log.d("Ayush",pr.getRequestId());
+            for (PendingRequests pr : selectedPendingReq) {
                 selectedRequestIdList.add(pr.getRequestId());
             }
             showAssignPopUp();
         });
 
-        selectTextView.setOnClickListener( v->{
+        selectTextView.setOnClickListener(v -> {
             pendingRequestRecyclerAdapter.selectAllRequest();
         });
 
-        unSelectTextView.setOnClickListener( v->{
+        unSelectTextView.setOnClickListener(v -> {
             pendingRequestRecyclerAdapter.unselectAllRequest();
         });
     }
 
     @Override
     public void onAssignPickupBoyAction(Boolean isSelected) {
-        if(isSelected){
+        if (isSelected) {
             selectUnselectLayout.setVisibility(View.VISIBLE);
             assignPickupBoyButton.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             selectUnselectLayout.setVisibility(View.GONE);
             assignPickupBoyButton.setVisibility(View.GONE);
         }
     }
 
-    private void showAssignPopUp(){
+    private void showAssignPopUp() {
         TextView cross;
         SearchView popupSearchView;
         RecyclerView popupRecyclerView;
@@ -132,14 +128,14 @@ public class PendingRequestActivity extends BaseActivity implements PendingReque
         popupRecyclerView = assignPickupDialog.findViewById(R.id.pickup_rv_popup);
         popupRecyclerView.hasFixedSize();
         popupRecyclerView.setLayoutManager(new LinearLayoutManager(this
-                ,LinearLayoutManager.VERTICAL,false));
+                , LinearLayoutManager.VERTICAL, false));
         List<JSONObject> jsonObjectList = new ArrayList<>();
         showDialog("Getting Pickup Agents");
         String pickupBoyJSONString = sharedPreference.getMyPickupBoy();
-        if(pickupBoyJSONString != null){
+        if (pickupBoyJSONString != null) {
             try {
                 pickupAgentList = new JSONArray(pickupBoyJSONString);
-                for(int i=0;i<pickupAgentList.length();i++){
+                for (int i = 0; i < pickupAgentList.length(); i++) {
                     try {
                         jsonObjectList.add(pickupAgentList.getJSONObject(i));
                     } catch (JSONException e) {
@@ -147,31 +143,31 @@ public class PendingRequestActivity extends BaseActivity implements PendingReque
                     }
                 }
                 pickupBoyPopupRecyclerAdapter = new PickupBoyPopupRecyclerAdapter(context,
-                        jsonObjectList,assignPickupDialog,selectedRequestIdList);
+                        jsonObjectList, assignPickupDialog, selectedRequestIdList);
                 popupRecyclerView.setAdapter(pickupBoyPopupRecyclerAdapter);
                 updateDialog.dismiss();
                 updateDialog.dismiss();
             } catch (JSONException e) {
                 updateDialog.dismiss();
             }
-        }else{
+        } else {
             ApiClient apiClient = new ApiClient(getApplicationContext());
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
             String jwtToken = "Bearer " + sharedPreference.getJwtToken();
-            Call<HashMap<Object,Object>> call = apiService.getMyPickupBoy(jwtToken);
+            Call<HashMap<Object, Object>> call = apiService.getMyPickupBoy(jwtToken);
             call.enqueue(new Callback<HashMap<Object, Object>>() {
                 @Override
                 public void onResponse(Call<HashMap<Object, Object>> call, Response<HashMap<Object, Object>> response) {
-                    if(response.isSuccessful() && response.body() != null){
-                        HashMap<Object,Object> resultMap = response.body();
-                        int statusCode = (int)(double)resultMap.get("statusCode");
-                        if(statusCode == 1){
+                    if (response.isSuccessful() && response.body() != null) {
+                        HashMap<Object, Object> resultMap = response.body();
+                        int statusCode = (int) (double) resultMap.get("statusCode");
+                        if (statusCode == 1) {
                             String pickupBoyJSONString = resultMap.get("message").toString();
                             try {
-                                pickupAgentList= new JSONArray(pickupBoyJSONString);
-                                if(pickupAgentList.length() != 0) {
+                                pickupAgentList = new JSONArray(pickupBoyJSONString);
+                                if (pickupAgentList.length() != 0) {
                                     sharedPreference.insertMyPickupBoy(pickupBoyJSONString);
-                                    for(int i=0;i<pickupAgentList.length();i++){
+                                    for (int i = 0; i < pickupAgentList.length(); i++) {
                                         try {
                                             jsonObjectList.add(pickupAgentList.getJSONObject(i));
                                         } catch (JSONException e) {
@@ -180,22 +176,22 @@ public class PendingRequestActivity extends BaseActivity implements PendingReque
                                     }
                                     updateDialog.dismiss();
                                     pickupBoyPopupRecyclerAdapter = new PickupBoyPopupRecyclerAdapter(context,
-                                            jsonObjectList,assignPickupDialog,selectedRequestIdList);
+                                            jsonObjectList, assignPickupDialog, selectedRequestIdList);
                                     popupRecyclerView.setAdapter(pickupBoyPopupRecyclerAdapter);
-                                }else{
+                                } else {
                                     updateDialog.dismiss();
-                                    Snackbar.make(pendingReqMainLayout,"Something went wrong!",
+                                    Snackbar.make(pendingReqMainLayout, "Something went wrong!",
                                             Snackbar.LENGTH_SHORT).show();
                                 }
                             } catch (JSONException e) {
                                 updateDialog.dismiss();
-                                Snackbar.make(pendingReqMainLayout,"Something went wrong!",
+                                Snackbar.make(pendingReqMainLayout, "Something went wrong!",
                                         Snackbar.LENGTH_SHORT).show();
                             }
                         }
-                    }else{
+                    } else {
                         updateDialog.dismiss();
-                        Snackbar.make(pendingReqMainLayout,"Something went wrong!",
+                        Snackbar.make(pendingReqMainLayout, "Something went wrong!",
                                 Snackbar.LENGTH_SHORT).show();
                     }
                 }
@@ -203,7 +199,7 @@ public class PendingRequestActivity extends BaseActivity implements PendingReque
                 @Override
                 public void onFailure(Call<HashMap<Object, Object>> call, Throwable t) {
                     updateDialog.dismiss();
-                    Snackbar.make(pendingReqMainLayout,"Something went wrong!",
+                    Snackbar.make(pendingReqMainLayout, "Something went wrong!",
                             Snackbar.LENGTH_SHORT).show();
                 }
             });
@@ -225,17 +221,15 @@ public class PendingRequestActivity extends BaseActivity implements PendingReque
 
         ImageView clearButton = popupSearchView.findViewById(androidx.appcompat.R.id.search_close_btn);
         clearButton.setOnClickListener(v -> {
-            if(popupSearchView.getQuery().length() == 0) {
-                Log.d("Ayush","CLicked!");
+            if (popupSearchView.getQuery().length() == 0) {
                 popupSearchView.setQuery("", true);
                 popupSearchView.setIconified(true);
             } else {
-                Log.d("Ayush","CLicked123!");
                 popupSearchView.setQuery("", false);
                 pickupBoyPopupRecyclerAdapter.filter(null);
             }
         });
-        if(updateDialog.isShowing()){
+        if (updateDialog.isShowing()) {
             updateDialog.dismiss();
         }
         cross.setOnClickListener(v1 -> assignPickupDialog.dismiss());
@@ -243,29 +237,28 @@ public class PendingRequestActivity extends BaseActivity implements PendingReque
     }
 
 
-    private void getPendingRequestList(){
+    private void getPendingRequestList() {
         showDialog("Getting Pending Requests!");
         ApiClient apiClient = new ApiClient(getApplicationContext());
         ApiInterface apiService = apiClient.getClient().create(ApiInterface.class);
 
-        Call<HashMap<Object, Object>> call=apiService.getPendingRequestList("Bearer "+sharedPreference.getJwtToken(),0);
+        Call<HashMap<Object, Object>> call = apiService.getPendingRequestList("Bearer " + sharedPreference.getJwtToken(), 0);
 
         call.enqueue(new Callback<HashMap<Object, Object>>() {
             @Override
             public void onResponse(Call<HashMap<Object, Object>> call,
                                    Response<HashMap<Object, Object>> response) {
-                if(response.isSuccessful() && response.body()!=null){
+                if (response.isSuccessful() && response.body() != null) {
                     HashMap<Object, Object> resultMap = response.body();
                     int statusCode = (int) (double) resultMap.get("statusCode");
                     if (statusCode == -1) {
                         updateDialog.dismiss();
                         showSnackbarAPI();
-                    }
-                    else if(statusCode==2){
+                    } else if (statusCode == 2) {
                         try {
-                            Object customerObj=resultMap.get("data");
-                            pendingRequestArray=new JSONArray(customerObj.toString());
-                            if(pendingRequestArray.length() != 0) {
+                            Object customerObj = resultMap.get("data");
+                            pendingRequestArray = new JSONArray(customerObj.toString());
+                            if (pendingRequestArray.length() != 0) {
                                 for (int i = 0; i < pendingRequestArray.length(); i++) {
                                     JSONObject pendingRequestObj = pendingRequestArray.getJSONObject(i);
                                     PendingRequests pendingRequests = createPendingRequest(pendingRequestObj);
@@ -276,7 +269,7 @@ public class PendingRequestActivity extends BaseActivity implements PendingReque
                                 pendingRequestRV.setAdapter(pendingRequestRecyclerAdapter);
                                 updateDialog.dismiss();
                                 noPendingRequestLayout.setVisibility(View.GONE);
-                            }else{
+                            } else {
                                 updateDialog.dismiss();
                                 noPendingRequestLayout.setVisibility(View.VISIBLE);
                             }
@@ -285,17 +278,16 @@ public class PendingRequestActivity extends BaseActivity implements PendingReque
                             noPendingRequestLayout.setVisibility(View.VISIBLE);
                         }
 
-                    }
-                    else{
+                    } else {
                         updateDialog.dismiss();
                         showSnackbarAPI();
                     }
-                }
-                else {
+                } else {
                     updateDialog.dismiss();
                     showSnackbarAPI();
                 }
             }
+
             @Override
             public void onFailure(Call<HashMap<Object, Object>> call, Throwable t) {
                 updateDialog.dismiss();
@@ -304,28 +296,27 @@ public class PendingRequestActivity extends BaseActivity implements PendingReque
         });
     }
 
-    private PendingRequests createPendingRequest(JSONObject jsonObject){
+    private PendingRequests createPendingRequest(JSONObject jsonObject) {
         try {
             JSONObject addressObj = new JSONObject(jsonObject.get("req_address").toString());
-            JSONObject custObj=new JSONObject(jsonObject.get("reqBy").toString());
+            JSONObject custObj = new JSONObject(jsonObject.get("reqBy").toString());
             Timestamp requestDate = Timestamp.valueOf(jsonObject.get("requestDate").toString());
             Date date = new Date(requestDate.getTime());
             String requestDateString = new SimpleDateFormat("EE, dd-MMM-yyyy").format(date);
             Timestamp requestedOnDate = Timestamp.valueOf(jsonObject.get("requestPlacementTimestamp").toString());
             Date date1 = new Date(requestedOnDate.getTime());
             String requestedOnString = new SimpleDateFormat("EE, dd-MMM-yyyy").format(date1);
-            PendingRequests pendingRequests = new PendingRequests(addressObj.getString("street"),false);
+            PendingRequests pendingRequests = new PendingRequests(addressObj.getString("street"), false);
             pendingRequests.setRequestId(jsonObject.getString("requestId"));
             pendingRequests.setRequestDate(requestDateString);
             pendingRequests.setRequestedOn(requestedOnString);
             pendingRequests.setRequestTime(jsonObject.getString("timeSlot"));
-            if(custObj.has("profilePicUrl"))
-            pendingRequests.setProfilePicUrl(custObj.getString("profilePicUrl"));
+            if (custObj.has("profilePicUrl"))
+                pendingRequests.setProfilePicUrl(custObj.getString("profilePicUrl"));
             return pendingRequests;
-        }catch (Exception e){
-            Log.d("Ayush","Error while creating pending request obj from json");
+        } catch (Exception e) {
         }
-        return new PendingRequests("",false);
+        return new PendingRequests("", false);
     }
 
     private void showDialog(String text) {
@@ -342,8 +333,8 @@ public class PendingRequestActivity extends BaseActivity implements PendingReque
         updateDialog.show();
     }
 
-    private void showSnackbarAPI(){
-        snackbar = Snackbar.make(pendingReqMainLayout,"Something went wrong!",
+    private void showSnackbarAPI() {
+        snackbar = Snackbar.make(pendingReqMainLayout, "Something went wrong!",
                 Snackbar.LENGTH_INDEFINITE);
         snackbar.setAction("RETRY", new View.OnClickListener() {
             @Override

@@ -48,16 +48,15 @@ public interface ApiInterface {
             @Header("Authorization") String authHeader
     );
 
+    @POST("/auth/notification/registerDevice")
+    Call<HashMap<Object,Object>> registerDevice(@Body JunkYardOwnerDeviceFCM junkYardOwnerDeviceFCM,
+                                                @Query("type") String type);
+
     @POST("/junkYardOwner/generateNewToken")
     Call<HashMap<Object,Object>> generateNewJwtToken(
             @Query("phoneNumber") String phoneNumber,
             @Header("Authorization") String authHeader
     );
-
-    @POST("/notification/registerDevice")
-    Call<HashMap<Object,Object>> registerDevice(@Header("Authorization") String auth,
-                                                @Query("requestId") String requestId,
-                                                @Body JunkYardOwnerDeviceFCM junkYardOwnerDeviceFCM);
 
 
     @GET("/junkYardOwner/getRequestList")

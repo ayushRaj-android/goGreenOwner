@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Go Green Owner</string>
+    <string name="app_name">Trash Tag Owner</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="tnC"><u>Accepts Terms and Conditions</u>.</string>
@@ -15,7 +15,7 @@
     <string name="conf_password">Confirm Password</string>
     <string name="Signing_up">Signing Up...</string>
     <string name="verify_acc">Verify your account</string>
-    <string name="verify_msg">Please type the verification code sent to Pickup Boy phone.</string>
+    <string name="verify_msg">Please type the verification code sent to your phone number.</string>
     <string name="underline_tnC"><u>Terms and Conditions</u></string>
     <string name="login_phone">Enter your phone number</string>
     <string name="login_pass">Enter your password</string>
@@ -37,4 +37,25 @@
     <string name="request">Request</string>
     <string name="select_all"><u>Select All</u></string>
     <string name="unselect_all"><u>Unselect All</u></string>
+    <string name="dashboard">Dashboard</string>
+    <string name="pending_requests">Pending Requests</string>
+    <string name="you_don_t_have_any_pending_request">You don\'t have any Pending Request</string>
+    <string name="assign_pickup_agent">Assign Pickup Agent</string>
+    <string name="pick_up_agents">Pick-up Agents</string>
+    <string name="you_don_t_have_any_pickup_agent">You don\'t have any Pickup Agent</string>
+    <string name="number_of_pickups">Number of pickups</string>
+    <string name="weight_picked_up">Weight Picked Up</string>
+    <string name="register_pick_up_agent">Register Pick-up Agent</string>
+    <string name="aadhar_number">Aadhar Number</string>
+    <string name="upload_photo">Upload Photo</string>
+    <string name="upload_aadhar_card">Upload Aadhar Card</string>
+    <string name="submit">Submit</string>
+    <string name="requests">Requests</string>
+    <string name="all">All</string>
+    <string name="today">Today</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="completed">Completed</string>
+    <string name="request_date">Request Date :-</string>
+    <string name="request_time">Request Time :-</string>
+    <string name="logout">Logout</string>
 </resources>

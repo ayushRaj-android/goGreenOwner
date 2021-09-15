@@ -34,7 +34,6 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/pickup_popup_prof_pic"
             android:layout_toStartOf="@id/pickup_popup_assign"
-            android:text="Ayush Raj"
             android:layout_marginStart="3dp"
             android:maxLines="1"
             android:layout_centerVertical="true"

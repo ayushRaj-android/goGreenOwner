@@ -19,6 +19,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+
+import com.ata.gogreenowner.Activity.RequestsActivity;
 import com.ata.gogreenowner.Activity.SplashActivity;
 import com.ata.gogreenowner.Adapter.ApiClient;
 import com.ata.gogreenowner.Adapter.ApiInterface;
@@ -61,12 +63,11 @@ public class MyFirebaseInstanceIdService extends FirebaseMessagingService {
 
     private void updateFCMForUser(String token, String deviceId) {
         try {
-            String jwtToken = "Bearer " + sharedPreference.getRefreshToken();
             String userPhone = sharedPreference.getUserPhone();
-            JunkYardOwnerDeviceFCM  junkYardOwnerDeviceFCM = new JunkYardOwnerDeviceFCM(deviceId,token,null);
+            JunkYardOwnerDeviceFCM  junkYardOwnerDeviceFCM = new JunkYardOwnerDeviceFCM(deviceId,token,userPhone);
             ApiClient apiClient = new ApiClient(this);
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-            Call<HashMap<Object, Object>> call = apiService.registerDevice(jwtToken,userPhone,junkYardOwnerDeviceFCM);
+            Call<HashMap<Object, Object>> call = apiService.registerDevice(junkYardOwnerDeviceFCM,"junkyard owner");
             call.enqueue(new Callback<HashMap<Object, Object>>() {
                 @SneakyThrows
                 @Override
@@ -93,20 +94,37 @@ public class MyFirebaseInstanceIdService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(@NonNull @NotNull RemoteMessage remoteMessage) {
-        String messageTitle = remoteMessage.getData().get("title");
-        String messageBody = remoteMessage.getData().get("body");
+        String messageTitle = null;
+        if(remoteMessage.getNotification() != null && remoteMessage.getNotification().getTitle() != null){
+            messageTitle = remoteMessage.getNotification().getTitle();
+        }else{
+            messageTitle = remoteMessage.getData().get("title");
+        }
+        String messageBody = null;
+        if(remoteMessage.getNotification() != null && remoteMessage.getNotification().getBody() != null){
+            messageBody = remoteMessage.getNotification().getBody();
+        }else{
+            messageBody = remoteMessage.getData().get("body");
+        }
         Map<String, String> hashMap = remoteMessage.getData();
         String type = hashMap.get("type");
         if (type == null) {
-            createNotification(messageTitle, messageBody);
+            createNotification(messageTitle, messageBody,0);
+        }else{
+            createNotification(messageTitle, messageBody,1);
         }
     }
 
-    public void createNotification(String title, String body) {
+    public void createNotification(String title, String body,int flag) {
         int id = (int) System.currentTimeMillis();
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Uri notificationSoundURI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Intent intent = new Intent(this, SplashActivity.class);
+        Intent intent = null;
+        if(flag == 0){
+            intent = new Intent(this, SplashActivity.class);
+        }else{
+            intent = new Intent(this, RequestsActivity.class);
+        }
         PendingIntent pendingIntent;
         if (isAppInForeground()) {
             pendingIntent = null;
@@ -130,23 +148,33 @@ public class MyFirebaseInstanceIdService extends FirebaseMessagingService {
             notification = new Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
                     .setContentTitle(title)
                     .setContentText(body)
-                    .setSmallIcon(R.mipmap.ic_launcher_round)
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true)
                     .setSound(notificationSoundURI, audioAttributes)
                     .setVisibility(Notification.VISIBILITY_PUBLIC);
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                notification.setSmallIcon(R.drawable.ic_notification);
+                notification.setColor(getResources().getColor(R.color.colorAccent));
+            } else {
+                notification.setSmallIcon(R.drawable.ic_notification);
+            }
             notificationManager.notify(id, notification.build());
         } else {
             NotificationCompat.Builder builder = null;
             builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-                    .setContentTitle("Challenge Notification")
+                    .setContentTitle(title)
                     .setContentText(body)
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true)
                     .setColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
-                    .setSmallIcon(R.mipmap.ic_launcher_round)
                     .setPriority(Notification.PRIORITY_MAX)
                     .setSound(notificationSoundURI);
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder.setSmallIcon(R.drawable.ic_notification);
+                builder.setColor(getResources().getColor(R.color.colorAccent));
+            } else {
+                builder.setSmallIcon(R.drawable.ic_notification);
+            }
             notificationManager.notify(id, builder.build());
         }
     }

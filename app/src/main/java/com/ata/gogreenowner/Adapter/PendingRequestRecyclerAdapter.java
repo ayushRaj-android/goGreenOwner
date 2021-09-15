@@ -1,27 +1,21 @@
 package com.ata.gogreenowner.Adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ata.gogreenowner.Activity.PendingRequestActivity;
 import com.ata.gogreenowner.Model.PendingRequests;
 import com.ata.gogreenowner.R;
 import com.ata.gogreenowner.Utility.PendingRequestListener;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,22 +51,22 @@ public class PendingRequestRecyclerAdapter extends RecyclerView.Adapter<PendingR
         return pendingRequestsList.size();
     }
 
-    public List<PendingRequests> getSelectedPendingRequest(){
-         return selectedPendingRequestList;
+    public List<PendingRequests> getSelectedPendingRequest() {
+        return selectedPendingRequestList;
     }
 
-    public void selectAllRequest(){
+    public void selectAllRequest() {
         selectedPendingRequestList.clear();
-        for(PendingRequests pendingRequests : pendingRequestsList){
+        for (PendingRequests pendingRequests : pendingRequestsList) {
             pendingRequests.setSelected(true);
         }
         selectedPendingRequestList.addAll(pendingRequestsList);
         notifyDataSetChanged();
     }
 
-    public void unselectAllRequest(){
+    public void unselectAllRequest() {
         selectedPendingRequestList.clear();
-        for(PendingRequests pendingRequests : pendingRequestsList){
+        for (PendingRequests pendingRequests : pendingRequestsList) {
             pendingRequests.setSelected(false);
         }
         pendingRequestListener.onAssignPickupBoyAction(false);
@@ -82,37 +76,36 @@ public class PendingRequestRecyclerAdapter extends RecyclerView.Adapter<PendingR
     public class ViewHolder extends RecyclerView.ViewHolder {
         LinearLayout cardContentLayout;
         AppCompatCheckBox pendingReqCheckBox;
-        TextView addressTextView, requestedOnTextView, requestDateTextView, requestTimeTextView;
+        TextView addressTextView, requestDateTextView, requestTimeTextView;
         ImageView userProfilePicImageView;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             addressTextView = itemView.findViewById(R.id.address_tv);
             pendingReqCheckBox = itemView.findViewById(R.id.pending_req_card_cb);
             cardContentLayout = itemView.findViewById(R.id.cardContentLayout);
-            requestedOnTextView=itemView.findViewById(R.id.order_placement_time);
-            requestDateTextView=itemView.findViewById(R.id.request_date);
-            requestTimeTextView=itemView.findViewById(R.id.request_time);
+            requestDateTextView = itemView.findViewById(R.id.request_date);
+            requestTimeTextView = itemView.findViewById(R.id.request_time);
         }
 
-        void bindPendingRequest(PendingRequests pendingRequests){
-            addressTextView.setText(pendingRequests.getAddress());
-            requestedOnTextView.setText(pendingRequests.getRequestedOn());
+        void bindPendingRequest(PendingRequests pendingRequests) {
+            addressTextView.setText(pendingRequests.getAddress() + ", " + pendingRequests.getLocality());
             requestDateTextView.setText(pendingRequests.getRequestDate());
             requestTimeTextView.setText(pendingRequests.getRequestTime());
-            if(pendingRequests.isSelected()){
+            if (pendingRequests.isSelected()) {
                 pendingReqCheckBox.setChecked(true);
-            }else{
+            } else {
                 pendingReqCheckBox.setChecked(false);
             }
-            cardContentLayout.setOnClickListener( v->{
-                if(pendingReqCheckBox.isChecked()){
+            cardContentLayout.setOnClickListener(v -> {
+                if (pendingReqCheckBox.isChecked()) {
                     selectedPendingRequestList.remove(pendingRequests);
                     pendingReqCheckBox.setChecked(false);
                     pendingRequests.setSelected(false);
-                    if(selectedPendingRequestList.size() == 0){
+                    if (selectedPendingRequestList.size() == 0) {
                         pendingRequestListener.onAssignPickupBoyAction(false);
                     }
-                }else{
+                } else {
                     selectedPendingRequestList.add(pendingRequests);
                     pendingReqCheckBox.setChecked(true);
                     pendingRequests.setSelected(true);
@@ -123,13 +116,13 @@ public class PendingRequestRecyclerAdapter extends RecyclerView.Adapter<PendingR
             pendingReqCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(!isChecked){
+                    if (!isChecked) {
                         selectedPendingRequestList.remove(pendingRequests);
                         pendingRequests.setSelected(false);
-                        if(selectedPendingRequestList.size() == 0){
+                        if (selectedPendingRequestList.size() == 0) {
                             pendingRequestListener.onAssignPickupBoyAction(false);
                         }
-                    }else{
+                    } else {
                         selectedPendingRequestList.add(pendingRequests);
                         pendingRequests.setSelected(true);
                         pendingRequestListener.onAssignPickupBoyAction(true);

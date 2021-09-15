@@ -1,10 +1,5 @@
 package com.ata.gogreenowner.Activity;
 
-import androidx.appcompat.widget.AppCompatImageButton;
-import androidx.appcompat.widget.SearchView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +13,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.appcompat.widget.SearchView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.ata.gogreenowner.Adapter.ApiClient;
 import com.ata.gogreenowner.Adapter.ApiInterface;
 import com.ata.gogreenowner.Adapter.PickupBoyRecyclerAdapter;
@@ -28,11 +28,8 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -63,7 +60,7 @@ public class PickupAgentActivity extends BaseActivity {
         pickUpBoySearchView = findViewById(R.id.pickup_search);
         pickupAgentRecyclerView.hasFixedSize();
         pickupAgentRecyclerView.setLayoutManager(new LinearLayoutManager(this
-                ,LinearLayoutManager.VERTICAL,false));
+                , LinearLayoutManager.VERTICAL, false));
         addPickupAgentButton = findViewById(R.id.addPickupAgentButton);
         sharedPreference = new SharedPreference(this);
         noPickupAgentLayout = findViewById(R.id.noPickupAgentLayout);
@@ -83,7 +80,7 @@ public class PickupAgentActivity extends BaseActivity {
 
         ImageView clearButton = pickUpBoySearchView.findViewById(androidx.appcompat.R.id.search_close_btn);
         clearButton.setOnClickListener(v -> {
-            if(pickUpBoySearchView.getQuery().length() == 0) {
+            if (pickUpBoySearchView.getQuery().length() == 0) {
                 pickUpBoySearchView.setQuery("", false);
                 pickUpBoySearchView.setIconified(true);
             } else {
@@ -92,11 +89,11 @@ public class PickupAgentActivity extends BaseActivity {
             }
         });
 
-        addPickupAgentButton.setOnClickListener( v->{
-            if(snackbar != null && snackbar.isShown()) {
+        addPickupAgentButton.setOnClickListener(v -> {
+            if (snackbar != null && snackbar.isShown()) {
                 snackbar.dismiss();
             }
-            Intent intent = new Intent(this,RegsiterPickupAgentActivity.class);
+            Intent intent = new Intent(this, RegsiterPickupAgentActivity.class);
             startActivity(intent);
             finish();
         });
@@ -105,44 +102,44 @@ public class PickupAgentActivity extends BaseActivity {
 
     }
 
-    private void populatePickupAgent(){
+    private void populatePickupAgent() {
         showDialog("Loading your pickup Agents!");
         String pickupBoyJSONString = sharedPreference.getMyPickupBoy();
-        if(pickupBoyJSONString != null){
+        if (pickupBoyJSONString != null) {
             JSONArray jsonArray = null;
             try {
                 jsonArray = new JSONArray(pickupBoyJSONString);
                 pickupBoyRecyclerAdapter = new PickupBoyRecyclerAdapter(
-                        context,jsonArray);
+                        context, jsonArray);
                 pickupAgentRecyclerView.setAdapter(pickupBoyRecyclerAdapter);
                 updateDialog.dismiss();
             } catch (JSONException e) {
                 showSnackbarAPI();
                 updateDialog.dismiss();
             }
-        }else{
+        } else {
             ApiClient apiClient = new ApiClient(getApplicationContext());
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
             String jwtToken = "Bearer " + sharedPreference.getJwtToken();
-            Call<HashMap<Object,Object>> call = apiService.getMyPickupBoy(jwtToken);
+            Call<HashMap<Object, Object>> call = apiService.getMyPickupBoy(jwtToken);
             call.enqueue(new Callback<HashMap<Object, Object>>() {
                 @Override
                 public void onResponse(Call<HashMap<Object, Object>> call, Response<HashMap<Object, Object>> response) {
-                    if(response.isSuccessful() && response.body() != null){
-                        HashMap<Object,Object> resultMap = response.body();
-                        int statusCode = (int)(double)resultMap.get("statusCode");
-                        if(statusCode == 1){
+                    if (response.isSuccessful() && response.body() != null) {
+                        HashMap<Object, Object> resultMap = response.body();
+                        int statusCode = (int) (double) resultMap.get("statusCode");
+                        if (statusCode == 1) {
                             String pickupBoyJSONString = resultMap.get("message").toString();
                             JSONArray jsonArray = null;
                             try {
                                 jsonArray = new JSONArray(pickupBoyJSONString);
-                                if(jsonArray.length() != 0) {
+                                if (jsonArray.length() != 0) {
                                     pickupBoyRecyclerAdapter = new PickupBoyRecyclerAdapter(
                                             context, jsonArray);
                                     pickupAgentRecyclerView.setAdapter(pickupBoyRecyclerAdapter);
                                     sharedPreference.insertMyPickupBoy(pickupBoyJSONString);
                                     updateDialog.dismiss();
-                                }else{
+                                } else {
                                     pickupAgentRecyclerView.setVisibility(View.GONE);
                                     noPickupAgentLayout.setVisibility(View.VISIBLE);
                                     updateDialog.dismiss();
@@ -152,7 +149,7 @@ public class PickupAgentActivity extends BaseActivity {
                                 updateDialog.dismiss();
                             }
                         }
-                    }else{
+                    } else {
                         showSnackbarAPI();
                         updateDialog.dismiss();
                     }
@@ -182,8 +179,8 @@ public class PickupAgentActivity extends BaseActivity {
         updateDialog.show();
     }
 
-    private void showSnackbarAPI(){
-        snackbar = Snackbar.make(mainPickupAgentLayout,"Something went wrong!",
+    private void showSnackbarAPI() {
+        snackbar = Snackbar.make(mainPickupAgentLayout, "Something went wrong!",
                 Snackbar.LENGTH_INDEFINITE);
         snackbar.setAction("RETRY", new View.OnClickListener() {
             @Override
