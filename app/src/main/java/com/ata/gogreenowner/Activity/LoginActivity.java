@@ -45,7 +45,6 @@ public class LoginActivity extends BaseActivity {
 
         phoneText = findViewById(R.id.phone_edit);
         passwordText = findViewById(R.id.password_edit);
-        signUpButton = findViewById(R.id.signUpButton);
         signInButton = findViewById(R.id.signInButton);
         errorTV = findViewById(R.id.errorTV);
         forgotPasswordTV = findViewById(R.id.forgot_password_tv);
