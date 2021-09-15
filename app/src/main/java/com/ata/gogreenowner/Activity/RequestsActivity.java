@@ -68,6 +68,7 @@ public class RequestsActivity extends BaseActivity {
     private Context context;
 
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -176,7 +177,6 @@ public class RequestsActivity extends BaseActivity {
                 requestSearchView.setQuery("", false);
                 if (radioGrpText.equalsIgnoreCase("all")) {
                     allRequestRecyclerAdapter.requestListToShow = allRequestList;
-                    allRequestRecyclerAdapter.notifyDataSetChanged();
                 } else if (radioGrpText.equalsIgnoreCase("Today")) {
                     allRequestRecyclerAdapter.requestListToShow = todayRequestList;
                     allRequestRecyclerAdapter.notifyDataSetChanged();

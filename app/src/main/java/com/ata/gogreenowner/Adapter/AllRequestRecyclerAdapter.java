@@ -92,7 +92,7 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
                 mView.setOnClickListener(v -> {
                     startRequestDetailsActivity(jsonObject);
                 });
-
+                step_view.cancel(false);
                 if (status == 0) {
                     step_view.selectedStep(1);
                     weightValueTab.setVisibility(View.GONE);
@@ -131,7 +131,7 @@ public class AllRequestRecyclerAdapter extends RecyclerView.Adapter<AllRequestRe
                     } else {
                         weightText.setText("Weight :- N/A");
                     }
-                } else {
+                } else if(status == -1) {
                     step_view.cancel(true);
                     weightValueTab.setVisibility(View.GONE);
                     lineAboveWeight.setVisibility(View.GONE);
