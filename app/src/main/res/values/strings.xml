@@ -57,4 +57,5 @@
     <string name="completed">Completed</string>
     <string name="request_date">Request Date :-</string>
     <string name="request_time">Request Time :-</string>
+    <string name="logout">Logout</string>
 </resources>
