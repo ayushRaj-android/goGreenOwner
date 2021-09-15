@@ -81,7 +81,7 @@ public class PickupBoyPopupRecyclerAdapter extends RecyclerView.Adapter<PickupBo
         } else {
             try {
                 for (JSONObject jsonObject : mainList) {
-                    if (jsonObject.get("name").toString().toLowerCase().startsWith(filterWord)) {
+                    if (jsonObject.get("name").toString().toLowerCase().contains(filterWord)) {
                         changingList.add(jsonObject);
                     }
                 }
