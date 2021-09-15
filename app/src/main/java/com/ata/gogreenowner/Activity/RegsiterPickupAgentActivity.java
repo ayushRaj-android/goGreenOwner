@@ -470,7 +470,7 @@ public class RegsiterPickupAgentActivity extends BaseActivity implements TextWat
                             updateDialog.dismiss();
                             registerFormLayout.setVisibility(View.GONE);
                             otpLayout.setVisibility(View.VISIBLE);
-                        } else if (statusCode == -1) {
+                        } else if (statusCode == -5) {
                             updateDialog.dismiss();
                             errorTV.setVisibility(View.VISIBLE);
                             errorTV.setText("Phone number already in use!");
