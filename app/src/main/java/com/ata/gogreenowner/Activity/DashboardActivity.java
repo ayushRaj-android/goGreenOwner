@@ -27,6 +27,7 @@ public class DashboardActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         sharedPreference = new SharedPreference(this);
+        alertDialogBuilder = new AlertDialog.Builder(this);
 
         pickupAgentCard = findViewById(R.id.pick_agent_card);
         pickupAgentCard.setOnClickListener(v -> {

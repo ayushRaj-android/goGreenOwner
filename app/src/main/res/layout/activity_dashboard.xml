@@ -21,7 +21,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/logout"
                 android:layout_centerVertical="true"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/svCancelColor"
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:layout_marginStart="10dp"

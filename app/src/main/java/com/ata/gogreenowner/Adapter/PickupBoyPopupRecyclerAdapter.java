@@ -175,12 +175,14 @@ public class PickupBoyPopupRecyclerAdapter extends RecyclerView.Adapter<PickupBo
 
         public void bindJSONObject(JSONObject jsonObject) {
             try {
+                Log.d("Ayush",jsonObject.toString());
                 String url = jsonObject.getString("profilePicUrl");
                 Glide.with(context).load(url).apply(RequestOptions.circleCropTransform()).optionalCircleCrop().into(profilePic);
                 agentName.setText(jsonObject.get("name").toString());
                 assignButton.setOnClickListener(v -> {
                     try {
-                        callAssignPickupApi(Long.parseLong(jsonObject.get("id").toString()));
+                        Log.d("Ayush","assign button clicked!");
+                        callAssignPickupApi(Long.parseLong(jsonObject.get("pickupBoyId").toString()));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
